@@ -1,340 +1,249 @@
-* { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+let userData = { userId: null, balance: 1000, gamesPlayed: 0, wins: 0, losses: 0 };
+const ADMIN_ID = 1;
 
-body {
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    font-family: -apple-system, sans-serif;
-    color: white;
-    overflow: hidden;
-    touch-action: manipulation;
+function getUserId() {
+    let id = localStorage.getItem('clickapp_user_id');
+    if (id) return parseInt(id);
+    let maxId = parseInt(localStorage.getItem('clickapp_max_id') || '0');
+    maxId++;
+    localStorage.setItem('clickapp_max_id', maxId.toString());
+    localStorage.setItem('clickapp_user_id', maxId.toString());
+    return maxId;
 }
 
-.header {
-    background: rgba(26,26,46,0.9);
-    padding: 15px 20px;
-    border-bottom: 2px solid #ffd700;
+function init() {
+    userData.userId = getUserId();
+    loadData();
+    updateUI();
+    showGames();
 }
 
-.header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 400px;
-    margin: 0 auto;
+function getKey() { return 'clickapp_user_' + userData.userId; }
+
+function loadData() {
+    const data = localStorage.getItem(getKey());
+    if (data) {
+        try { userData = { ...userData, ...JSON.parse(data) }; } catch(e) {}
+    } else {
+        saveData();
+    }
 }
 
-.logo {
-    font-size: 18px;
-    font-weight: 900;
-    color: #ffd700;
+function saveData() { localStorage.setItem(getKey(), JSON.stringify(userData)); }
+
+function updateUI() {
+    document.getElementById('balance').textContent = userData.balance;
+    document.getElementById('stat-balance').textContent = userData.balance;
+    document.getElementById('stat-games').textContent = userData.gamesPlayed;
+    document.getElementById('stat-wins').textContent = userData.wins;
+    document.getElementById('stat-losses').textContent = userData.losses;
+    document.getElementById('profile-id').textContent = userData.userId;
+    document.getElementById('profile-id-num').textContent = userData.userId;
+    document.getElementById('profile-avatar').textContent = '#' + userData.userId;
+    
+    if (userData.userId === ADMIN_ID) {
+        document.getElementById('admin-btn').classList.remove('hidden');
+    } else {
+        document.getElementById('admin-btn').classList.add('hidden');
+    }
 }
 
-.balance-box {
-    background: rgba(255,215,0,0.15);
-    border: 1px solid rgba(255,215,0,0.3);
-    border-radius: 20px;
-    padding: 8px 14px;
-    display: flex;
-    align-items: center;
-    gap: 7px;
+function addCoins(n) { userData.balance += n; saveData(); updateUI(); }
+
+function spendCoins(n) { 
+    if (userData.balance >= n) { 
+        userData.balance -= n; 
+        saveData(); 
+        updateUI(); 
+        return true; 
+    } 
+    return false; 
 }
 
-.balance {
-    font-size: 17px;
-    font-weight: 700;
-    color: #ffd700;
+function hideAll() {
+    ['games-screen', 'profile-screen', 'slots-screen', 'roulette-screen', 'dice-screen'].forEach(function(id) {
+        document.getElementById(id).classList.add('hidden');
+    });
 }
 
-.screen {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    overflow-y: auto;
+function showGames() {
+    hideAll();
+    document.getElementById('games-screen').classList.remove('hidden');
+    document.getElementById('nav-games').classList.add('active');
+    document.getElementById('nav-profile').classList.remove('active');
 }
 
-.hidden { display: none !important; }
-
-.screen-title {
-    font-size: 22px;
-    font-weight: 800;
-    margin-bottom: 20px;
+function showProfile() {
+    hideAll();
+    document.getElementById('profile-screen').classList.remove('hidden');
+    document.getElementById('nav-games').classList.remove('active');
+    document.getElementById('nav-profile').classList.add('active');
+    updateUI();
 }
 
-.menu-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
-    max-width: 380px;
+function showGame(game) {
+    hideAll();
+    if (game === 'menu') {
+        document.getElementById('games-screen').classList.remove('hidden');
+    } else {
+        document.getElementById(game + '-screen').classList.remove('hidden');
+    }
 }
 
-.menu-item {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 18px;
-    padding: 18px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    transition: all 0.2s;
+function showAdmin() {
+    if (userData.userId !== ADMIN_ID) { showToast('Нет доступа!', 'lose'); return; }
+    document.getElementById('admin-modal').classList.remove('hidden');
 }
 
-.menu-item:active {
-    transform: scale(0.95);
-    border-color: #ffd700;
+function closeAdmin() { document.getElementById('admin-modal').classList.add('hidden'); }
+
+function adminGive() {
+    const id = document.getElementById('admin-user-id').value.trim();
+    const amount = parseInt(document.getElementById('admin-amount').value);
+    if (!id || !amount || amount <= 0) { showToast('Введи ID и сумму!', 'lose'); return; }
+    
+    const key = 'clickapp_user_' + id;
+    const data = localStorage.getItem(key);
+    if (data) {
+        const parsed = JSON.parse(data);
+        parsed.balance += amount;
+        localStorage.setItem(key, JSON.stringify(parsed));
+    } else {
+        localStorage.setItem(key, JSON.stringify({ userId: parseInt(id), balance: 1000 + amount, gamesPlayed: 0, wins: 0, losses: 0 }));
+    }
+    showToast('Выдано ' + amount + ' монет игроку #' + id, 'win');
 }
 
-.menu-icon-box {
-    width: 48px;
-    height: 48px;
-    background: rgba(255,215,0,0.12);
-    border-radius: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    flex-shrink: 0;
+function adminTake() {
+    const id = document.getElementById('admin-user-id').value.trim();
+    const amount = parseInt(document.getElementById('admin-amount').value);
+    if (!id || !amount || amount <= 0) { showToast('Введи ID и сумму!', 'lose'); return; }
+    
+    const key = 'clickapp_user_' + id;
+    const data = localStorage.getItem(key);
+    if (data) {
+        const parsed = JSON.parse(data);
+        parsed.balance = Math.max(0, parsed.balance - amount);
+        localStorage.setItem(key, JSON.stringify(parsed));
+        showToast('Забрано ' + amount + ' монет у #' + id, 'info');
+    } else {
+        showToast('Игрок #' + id + ' не найден!', 'lose');
+    }
 }
 
-.menu-text { flex: 1; }
-.menu-title { font-size: 16px; font-weight: 700; }
-.menu-desc { font-size: 12px; color: #a0a0b0; margin-top: 3px; }
-.arrow { color: #ffd700; font-size: 20px; flex-shrink: 0; }
+let spinning = false;
+const symbols = ['🍒', '🍋', '💎', '7️⃣', '⭐', '🔔'];
 
-.back-btn {
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: white;
-    padding: 9px 14px;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-bottom: 15px;
-    font-size: 13px;
-    align-self: flex-start;
+function spin() {
+    if (spinning) return;
+    if (!spendCoins(100)) { showToast('Недостаточно монет!', 'lose'); return; }
+    spinning = true;
+    userData.gamesPlayed++;
+    saveData();
+    
+    const btn = document.getElementById('spin-btn');
+    btn.disabled = true;
+    btn.textContent = 'Крутим...';
+    
+    const slots = [1, 2, 3].map(function(i) { return document.getElementById('slot' + i); });
+    slots.forEach(function(s) { s.classList.add('spinning'); });
+    
+    const interval = setInterval(function() {
+        slots.forEach(function(s) { s.textContent = symbols[Math.floor(Math.random() * symbols.length)]; });
+    }, 80);
+    
+    setTimeout(function() {
+        clearInterval(interval);
+        slots.forEach(function(s) { s.classList.remove('spinning'); });
+        const result = slots.map(function(s) { return s.textContent; });
+        
+        if (result[0] === result[1] && result[1] === result[2]) {
+            addCoins(500); userData.wins++;
+            showResult('slot-result', 'ДЖЕКПОТ! +500!', 'win');
+            showToast('ДЖЕКПОТ! +500!', 'win');
+        } else if (result[0] === result[1] || result[1] === result[2] || result[0] === result[2]) {
+            addCoins(150); userData.wins++;
+            showResult('slot-result', '+150!', 'win');
+            showToast('+150!', 'win');
+        } else {
+            userData.losses++;
+            showResult('slot-result', 'Мимо!', 'lose');
+        }
+        saveData();
+        spinning = false;
+        btn.disabled = false;
+        btn.innerHTML = 'Крутить<span class="btn-cost">100 монет</span>';
+    }, 2000);
 }
 
-.game-box {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 20px;
-    padding: 22px 16px;
-    width: 100%;
-    max-width: 340px;
-    text-align: center;
+function betRoulette(color) {
+    if (!spendCoins(100)) { showToast('Недостаточно монет!', 'lose'); return; }
+    userData.gamesPlayed++;
+    saveData();
+    
+    setTimeout(function() {
+        const r = Math.random();
+        let result;
+        if (r < 0.03) result = 'zero';
+        else if (r < 0.5) result = 'red';
+        else result = 'black';
+        
+        if ((color === 'zero' && result === 'zero') || (color === 'red' && result === 'red') || (color === 'black' && result === 'black')) {
+            const win = color === 'zero' ? 1400 : 200;
+            addCoins(win); userData.wins++;
+            showResult('roulette-result', 'Выпало ' + result + '! +' + win + '!', 'win');
+            showToast('+' + win + '!', 'win');
+        } else {
+            userData.losses++;
+            showResult('roulette-result', 'Выпало ' + result + '. Мимо!', 'lose');
+        }
+        saveData();
+    }, 1000);
 }
 
-.game-title { font-size: 20px; font-weight: 800; margin-bottom: 12px; }
-
-.btn {
-    background: linear-gradient(135deg, #ffd700, #ff8c00);
-    color: #1a1a2e;
-    border: none;
-    padding: 14px 25px;
-    border-radius: 14px;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    width: 100%;
-    max-width: 280px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
+function betDice(choice) {
+    if (!spendCoins(100)) { showToast('Недостаточно монет!', 'lose'); return; }
+    userData.gamesPlayed++;
+    saveData();
+    
+    const dice = document.getElementById('dice-result');
+    const faces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+    dice.classList.add('rolling');
+    
+    const interval = setInterval(function() {
+        dice.textContent = faces[Math.floor(Math.random() * 6)];
+    }, 100);
+    
+    setTimeout(function() {
+        clearInterval(interval);
+        dice.classList.remove('rolling');
+        const result = Math.floor(Math.random() * 6);
+        dice.textContent = faces[result];
+        const isLow = result <= 2;
+        
+        if ((choice === 'low' && isLow) || (choice === 'high' && !isLow)) {
+            addCoins(200); userData.wins++;
+            showResult('dice-message', 'Выпало ' + (result + 1) + '! +200!', 'win');
+            showToast('+200!', 'win');
+        } else {
+            userData.losses++;
+            showResult('dice-message', 'Выпало ' + (result + 1) + '. Мимо!', 'lose');
+        }
+        saveData();
+    }, 1500);
 }
 
-.btn:active { transform: scale(0.95); }
-.btn:disabled { background: #555; color: #999; }
-.btn-cost { font-size: 12px; font-weight: 500; }
-
-.slots-row { display: flex; justify-content: center; gap: 10px; margin: 18px 0; }
-
-.slot {
-    width: 65px;
-    height: 65px;
-    background: rgba(0,0,0,0.4);
-    border-radius: 13px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 28px;
-    border: 2px solid rgba(255,215,0,0.3);
-    color: #ffd700;
+function showResult(id, msg, type) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = 'result-message ' + type;
 }
 
-.slot.spinning { animation: shake 0.1s linear infinite; }
-@keyframes shake { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
-
-.roulette-icon { font-size: 70px; margin: 15px 0; }
-
-.dice-box { display: flex; align-items: center; justify-content: center; margin: 18px 0; font-size: 70px; }
-.dice-box.rolling { animation: roll 0.1s linear infinite; }
-@keyframes roll { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-.bet-buttons { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; justify-content: center; }
-
-.bet-btn {
-    padding: 10px 16px;
-    border-radius: 10px;
-    border: none;
-    font-size: 13px;
-    cursor: pointer;
-    font-weight: 700;
-    transition: all 0.2s;
+function showToast(msg, type) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.className = 'toast ' + type + ' show';
+    setTimeout(function() { toast.classList.remove('show'); }, 2000);
 }
 
-.bet-btn:active { transform: scale(0.9); }
-.bet-red { background: #cc0000; color: white; }
-.bet-black { background: #222; color: white; }
-.bet-green { background: #006600; color: white; }
-.bet-low { background: #333; color: white; }
-.bet-high { background: #ffd700; color: #1a1a2e; }
-.bet-info { font-size: 12px; color: #a0a0b0; margin-top: 5px; }
-
-.result-message { font-size: 17px; margin: 10px; min-height: 25px; text-align: center; font-weight: 700; }
-.win { color: #00ff00; }
-.lose { color: #ff4444; }
-
-.profile-card {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.15);
-    border-radius: 20px;
-    padding: 22px 16px;
-    width: 100%;
-    max-width: 340px;
-    text-align: center;
-}
-
-.profile-avatar {
-    width: 75px;
-    height: 75px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #ffd700, #ff8c00);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 10px;
-    font-size: 30px;
-    font-weight: 900;
-    color: #1a1a2e;
-}
-
-.profile-name { font-size: 19px; font-weight: 800; margin-bottom: 5px; }
-.profile-id { font-size: 12px; color: #999; margin-bottom: 15px; }
-.profile-stats { width: 100%; }
-
-.stat-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 12px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 10px;
-    margin-bottom: 6px;
-}
-
-.stat-label { color: #a0a0b0; font-size: 12px; }
-.stat-value { font-weight: 700; color: #ffd700; font-size: 13px; }
-.stat-win { color: #00ff00 !important; }
-.stat-lose { color: #ff4444 !important; }
-
-.admin-btn {
-    background: linear-gradient(135deg, #ff4444, #cc0000);
-    color: white;
-    padding: 11px 16px;
-    border-radius: 11px;
-    border: none;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 700;
-    margin: 12px auto 0;
-    display: block;
-}
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 50;
-}
-
-.modal {
-    background: #2a2a4a;
-    border-radius: 18px;
-    padding: 22px 18px;
-    width: 90%;
-    max-width: 310px;
-    text-align: center;
-}
-
-.modal-title { font-size: 17px; font-weight: 800; margin-bottom: 12px; }
-
-.text-input {
-    width: 100%;
-    padding: 11px;
-    border-radius: 9px;
-    border: 1px solid rgba(255,255,255,0.3);
-    background: rgba(0,0,0,0.3);
-    color: white;
-    font-size: 14px;
-    text-align: center;
-    outline: none;
-    margin-bottom: 8px;
-}
-
-.admin-give-btn { width: 100%; padding: 10px; border-radius: 9px; border: none; background: #00aa00; color: white; font-weight: 700; cursor: pointer; margin-bottom: 8px; }
-.admin-take-btn { width: 100%; padding: 10px; border-radius: 9px; border: none; background: #cc0000; color: white; font-weight: 700; cursor: pointer; margin-bottom: 8px; }
-.admin-close-btn { width: 100%; padding: 10px; border-radius: 9px; border: none; background: #333; color: white; font-weight: 700; cursor: pointer; }
-
-.bottom-nav {
-    display: flex;
-    background: rgba(26,26,46,0.9);
-    border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-.bottom-nav button {
-    flex: 1;
-    background: none;
-    border: none;
-    color: #a0a0b0;
-    padding: 11px 5px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    font-size: 12px;
-}
-
-.bottom-nav button.active { color: #ffd700; }
-.nav-icon { font-size: 20px; }
-
-.toast {
-    position: fixed;
-    top: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 16px;
-    border-radius: 9px;
-    font-weight: 700;
-    font-size: 12px;
-    z-index: 100;
-    opacity: 0;
-    pointer-events: none;
-    transition: all 0.3s;
-}
-
-.toast.show { opacity: 1; }
-.toast.win { background: #00aa00; color: white; }
-.toast.lose { background: #ff4444; color: white; }
-.toast.info { background: #ffd700; color: #1a1a2e; }
+init();
