@@ -1,4 +1,9 @@
-// ============ ДАННЫЕ ============
+// ============ НАСТРОЙКИ АДМИНА ============
+// ВСТАВЬ СВОЙ TELEGRAM ID СЮДА!
+// Узнать можно у бота @userinfobot
+const ADMIN_ID = 123456789; // ← ЗАМЕНИ НА СВОЙ ID!
+
+// ============ ДАННЫЕ ПОЛЬЗОВАТЕЛЯ ============
 let userData = {
     userId: null,
     username: 'Гость',
@@ -33,6 +38,49 @@ const diceFaces = [
     '<svg viewBox="0 0 24 24" width="70" height="70" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="8" r="1.5" fill="currentColor"/><circle cx="8" cy="12" r="1.5" fill="currentColor"/><circle cx="16" cy="12" r="1.5" fill="currentColor"/><circle cx="8" cy="16" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>'
 ];
 
+// ============ РУЛЕТКА ============
+const rouletteNumbers = [
+    { num: 0, color: 'green' },
+    { num: 32, color: 'red' },
+    { num: 15, color: 'black' },
+    { num: 19, color: 'red' },
+    { num: 4, color: 'black' },
+    { num: 21, color: 'red' },
+    { num: 2, color: 'black' },
+    { num: 25, color: 'red' },
+    { num: 17, color: 'black' },
+    { num: 34, color: 'red' },
+    { num: 6, color: 'black' },
+    { num: 27, color: 'red' },
+    { num: 13, color: 'black' },
+    { num: 36, color: 'red' },
+    { num: 11, color: 'black' },
+    { num: 30, color: 'red' },
+    { num: 8, color: 'black' },
+    { num: 23, color: 'red' },
+    { num: 10, color: 'black' },
+    { num: 5, color: 'red' },
+    { num: 24, color: 'black' },
+    { num: 16, color: 'red' },
+    { num: 33, color: 'black' },
+    { num: 1, color: 'red' },
+    { num: 20, color: 'black' },
+    { num: 14, color: 'red' },
+    { num: 31, color: 'black' },
+    { num: 9, color: 'red' },
+    { num: 22, color: 'black' },
+    { num: 18, color: 'red' },
+    { num: 29, color: 'black' },
+    { num: 7, color: 'red' },
+    { num: 28, color: 'black' },
+    { num: 12, color: 'red' },
+    { num: 35, color: 'black' },
+    { num: 3, color: 'red' },
+    { num: 26, color: 'black' }
+];
+
+let isRouletteSpinning = false;
+
 // ============ ИНИЦИАЛИЗАЦИЯ ============
 function init() {
     if (window.Telegram?.WebApp) {
@@ -49,8 +97,64 @@ function init() {
     }
     
     loadUserData();
+    buildRoulette();
     updateUI();
     showGames();
+}
+
+// ============ ПОСТРОЕНИЕ РУЛЕТКИ ============
+function buildRoulette() {
+    const cellsGroup = document.getElementById('roulette-cells');
+    cellsGroup.innerHTML = '';
+    
+    const centerX = 120;
+    const centerY = 120;
+    const outerRadius = 100;
+    const innerRadius = 38;
+    const angleStep = 360 / rouletteNumbers.length;
+    
+    rouletteNumbers.forEach((item, index) => {
+        const startAngle = index * angleStep - 90;
+        const endAngle = (index + 1) * angleStep - 90;
+        
+        const x1 = centerX + innerRadius * Math.cos((startAngle) * Math.PI / 180);
+        const y1 = centerY + innerRadius * Math.sin((startAngle) * Math.PI / 180);
+        const x2 = centerX + outerRadius * Math.cos((startAngle) * Math.PI / 180);
+        const y2 = centerY + outerRadius * Math.sin((startAngle) * Math.PI / 180);
+        const x3 = centerX + outerRadius * Math.cos((endAngle) * Math.PI / 180);
+        const y3 = centerY + outerRadius * Math.sin((endAngle) * Math.PI / 180);
+        const x4 = centerX + innerRadius * Math.cos((endAngle) * Math.PI / 180);
+        const y4 = centerY + innerRadius * Math.sin((endAngle) * Math.PI / 180);
+        
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', `M ${x1} ${y1} L ${x2} ${y2} L ${x3} ${y3} L ${x4} ${y4} Z`);
+        path.setAttribute('fill', item.color === 'green' ? '#00aa00' : item.color === 'red' ? '#cc0000' : '#1a1a1a');
+        path.setAttribute('stroke', '#ffd700');
+        path.setAttribute('stroke-width', '0.8');
+        path.setAttribute('data-index', index);
+        path.setAttribute('data-color', item.color);
+        
+        cellsGroup.appendChild(path);
+        
+        if (item.num !== 0) {
+            const textAngle = ((startAngle + endAngle) / 2) * Math.PI / 180;
+            const textRadius = (innerRadius + outerRadius) / 2;
+            const tx = centerX + textRadius * Math.cos(textAngle);
+            const ty = centerY + textRadius * Math.sin(textAngle);
+            
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', tx);
+            text.setAttribute('y', ty);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('dominant-baseline', 'middle');
+            text.setAttribute('fill', 'white');
+            text.setAttribute('font-size', '7');
+            text.setAttribute('font-weight', 'bold');
+            text.textContent = item.num;
+            
+            cellsGroup.appendChild(text);
+        }
+    });
 }
 
 // ============ СОХРАНЕНИЕ ============
@@ -96,7 +200,6 @@ function updateUI() {
     const avatar = document.getElementById('profile-avatar');
     const name = document.getElementById('profile-name');
     
-    // Аватарка из Telegram
     if (userData.userId && window.Telegram?.WebApp) {
         const user = window.Telegram.WebApp.initDataUnsafe?.user;
         if (user?.photo_url) {
@@ -106,7 +209,6 @@ function updateUI() {
         }
     }
     
-    // Ник (кастомный или имя из Telegram)
     if (userData.nickname) {
         name.textContent = userData.nickname;
     } else if (userData.firstName) {
@@ -115,7 +217,6 @@ function updateUI() {
         name.textContent = 'Гость';
     }
     
-    // Уровень
     const level = Math.floor(userData.gamesPlayed / 10) + 1;
     document.getElementById('profile-level').textContent = 'Уровень ' + level;
     
@@ -124,6 +225,13 @@ function updateUI() {
     document.getElementById('stat-wins').textContent = userData.wins;
     document.getElementById('stat-losses').textContent = userData.losses;
     document.getElementById('stat-days').textContent = userData.daysPlayed;
+    
+    // Показываем админ-кнопку только владельцу
+    if (userData.userId === ADMIN_ID) {
+        document.getElementById('admin-btn').classList.remove('hidden');
+    } else {
+        document.getElementById('admin-btn').classList.add('hidden');
+    }
 }
 
 function addCoins(amount) {
@@ -176,6 +284,94 @@ function changeNick() {
     updateUI();
     closeChangeNick();
     showToast('Ник изменён!', 'win');
+}
+
+// ============ АДМИН-ПАНЕЛЬ ============
+function showAdminPanel() {
+    if (userData.userId !== ADMIN_ID) {
+        showToast('Нет доступа!', 'lose');
+        return;
+    }
+    
+    document.getElementById('admin-modal').classList.remove('hidden');
+    document.getElementById('admin-my-id').textContent = userData.userId;
+    document.getElementById('admin-total-users').textContent = countUsers();
+}
+
+function closeAdminPanel() {
+    document.getElementById('admin-modal').classList.add('hidden');
+}
+
+function countUsers() {
+    let count = 0;
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('clickapp_data_')) {
+            count++;
+        }
+    }
+    return count;
+}
+
+function adminGiveCoins() {
+    const targetId = document.getElementById('admin-user-id').value.trim();
+    const amount = parseInt(document.getElementById('admin-amount').value);
+    
+    if (!targetId || !amount || amount <= 0) {
+        showToast('Введи ID и сумму!', 'lose');
+        return;
+    }
+    
+    const targetKey = 'clickapp_data_' + targetId;
+    const targetData = localStorage.getItem(targetKey);
+    
+    if (targetData) {
+        const parsed = JSON.parse(targetData);
+        parsed.balance += amount;
+        localStorage.setItem(targetKey, JSON.stringify(parsed));
+        showToast('Выдано ' + amount + ' монет!', 'win');
+    } else {
+        // Создаём нового пользователя
+        const newUser = {
+            userId: parseInt(targetId),
+            username: 'Пользователь',
+            firstName: '',
+            nickname: null,
+            balance: 1000 + amount,
+            gamesPlayed: 0,
+            wins: 0,
+            losses: 0,
+            daysPlayed: 1,
+            firstVisit: new Date().toISOString(),
+            lastVisit: new Date().toISOString()
+        };
+        localStorage.setItem(targetKey, JSON.stringify(newUser));
+        showToast('Пользователь создан!', 'win');
+    }
+    
+    document.getElementById('admin-total-users').textContent = countUsers();
+}
+
+function adminRemoveCoins() {
+    const targetId = document.getElementById('admin-user-id').value.trim();
+    const amount = parseInt(document.getElementById('admin-amount').value);
+    
+    if (!targetId || !amount || amount <= 0) {
+        showToast('Введи ID и сумму!', 'lose');
+        return;
+    }
+    
+    const targetKey = 'clickapp_data_' + targetId;
+    const targetData = localStorage.getItem(targetKey);
+    
+    if (targetData) {
+        const parsed = JSON.parse(targetData);
+        parsed.balance = Math.max(0, parsed.balance - amount);
+        localStorage.setItem(targetKey, JSON.stringify(parsed));
+        showToast('Забрано ' + amount + ' монет!', 'info');
+    } else {
+        showToast('Пользователь не найден!', 'lose');
+    }
 }
 
 // ============ ТОСТ ============
@@ -287,43 +483,69 @@ function spin() {
     }, 2000);
 }
 
-// ============ РУЛЕТКА ============
+// ============ РУЛЕТКА (НОВАЯ) ============
 function betRoulette(color) {
+    if (isRouletteSpinning) return;
     if (!spendCoins(100)) {
         showToast('Недостаточно монет!', 'lose');
         return;
     }
 
+    isRouletteSpinning = true;
     userData.gamesPlayed++;
-    const wheel = document.getElementById('wheel');
-    const numbers = ['green', 'red', 'black', 'red', 'black', 'red', 'black', 'red', 'black'];
-    const result = numbers[Math.floor(Math.random() * numbers.length)];
-    const rotation = 1440 + Math.floor(Math.random() * 720);
     
-    wheel.style.transition = 'transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)';
-    wheel.style.transform = 'rotate(' + rotation + 'deg)';
-
+    const svg = document.querySelector('.roulette-svg');
+    const resultIndex = Math.floor(Math.random() * rouletteNumbers.length);
+    const result = rouletteNumbers[resultIndex];
+    
+    // Расчёт угла для остановки
+    const anglePerCell = 360 / rouletteNumbers.length;
+    const targetAngle = resultIndex * anglePerCell;
+    const fullSpins = 5;
+    const totalRotation = fullSpins * 360 + (360 - targetAngle) + 90;
+    
+    svg.classList.add('spinning');
+    
     setTimeout(() => {
-        if (result === color) {
-            const winAmount = color === 'green' ? 1400 : 200;
+        svg.classList.remove('spinning');
+        svg.style.transform = 'rotate(' + totalRotation + 'deg)';
+    }, 500);
+    
+    setTimeout(() => {
+        let win = false;
+        let winAmount = 0;
+        
+        if (color === 'zero' && result.color === 'green') {
+            win = true;
+            winAmount = 1400;
+        } else if (color === 'red' && result.color === 'red') {
+            win = true;
+            winAmount = 200;
+        } else if (color === 'black' && result.color === 'black') {
+            win = true;
+            winAmount = 200;
+        }
+        
+        if (win) {
             addCoins(winAmount);
             userData.wins++;
-            showResult('roulette-result', 'Выпало ' + result + '! +' + winAmount + ' монет!', 'win');
-            showToast('+' + winAmount + ' монет', 'win');
+            showResult('roulette-result', 'Выпало ' + result.num + ' (' + result.color + ')! +' + winAmount + ' монет!', 'win');
+            showToast('+' + winAmount + ' монет!', 'win');
         } else {
             userData.losses++;
-            showResult('roulette-result', 'Выпало ' + result + '. Повезёт в другой раз!', 'lose');
+            showResult('roulette-result', 'Выпало ' + result.num + ' (' + result.color + '). Не угадал!', 'lose');
         }
         
         saveUserData();
+        isRouletteSpinning = false;
         
         setTimeout(() => {
-            wheel.style.transition = 'none';
-            wheel.style.transform = 'rotate(0deg)';
+            svg.style.transition = 'none';
+            svg.style.transform = 'rotate(0deg)';
             setTimeout(() => {
-                wheel.style.transition = 'transform 3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+                svg.style.transition = 'transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)';
             }, 50);
-        }, 1000);
+        }, 2000);
     }, 4000);
 }
 
