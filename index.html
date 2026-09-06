@@ -3,16 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>🎰 Lucky Casino</title>
+    <title>Lucky Casino</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <!-- Шапка -->
     <div class="header">
         <div class="header-top">
-            <span class="logo">🎰 ClickApp </span>
+            <span class="logo">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2L15 9H22L16 14L19 21L12 16L5 21L8 14L2 9H9L12 2Z"/>
+                </svg>
+                LUCKY
+            </span>
             <div class="balance-box">
-                <span class="balance-icon">💰</span>
+                <svg class="balance-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M8 12h8M10 8h4M10 16h4" stroke="#1a1a2e" stroke-width="2"/>
+                </svg>
                 <span class="balance" id="balance">1000</span>
             </div>
         </div>
@@ -22,35 +30,65 @@
     <div class="screen" id="games-screen">
         <h1 class="screen-title">Выбери игру</h1>
         <div class="menu-grid">
+            <!-- Слоты -->
             <div class="menu-item" onclick="showGame('slots')">
                 <div class="menu-icon-wrapper">
-                    <div class="menu-icon">🎰</div>
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="4"/>
+                        <circle cx="8" cy="8" r="2.5" fill="currentColor"/>
+                        <circle cx="16" cy="8" r="2.5" fill="currentColor"/>
+                        <circle cx="8" cy="16" r="2.5" fill="currentColor"/>
+                        <circle cx="16" cy="16" r="2.5" fill="currentColor"/>
+                        <path d="M12 3v18" stroke="currentColor" stroke-width="1"/>
+                    </svg>
                 </div>
                 <div class="menu-text">
                     <div class="menu-title">Слоты</div>
                     <div class="menu-desc">Три семёрки — джекпот!</div>
                 </div>
-                <span class="arrow">→</span>
+                <svg class="arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 6l6 6-6 6"/>
+                </svg>
             </div>
+            
+            <!-- Рулетка -->
             <div class="menu-item" onclick="showGame('roulette')">
                 <div class="menu-icon-wrapper">
-                    <div class="menu-icon">🎡</div>
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="4"/>
+                        <circle cx="12" cy="5" r="1.5" fill="currentColor"/>
+                        <line x1="12" y1="12" x2="12" y2="2"/>
+                    </svg>
                 </div>
                 <div class="menu-text">
                     <div class="menu-title">Рулетка</div>
                     <div class="menu-desc">Угадай цвет — удвой!</div>
                 </div>
-                <span class="arrow">→</span>
+                <svg class="arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 6l6 6-6 6"/>
+                </svg>
             </div>
+            
+            <!-- Кости -->
             <div class="menu-item" onclick="showGame('dice')">
                 <div class="menu-icon-wrapper">
-                    <div class="menu-icon">🎲</div>
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <rect x="3" y="3" width="18" height="18" rx="3"/>
+                        <circle cx="8" cy="8" r="1.5" fill="currentColor"/>
+                        <circle cx="16" cy="8" r="1.5" fill="currentColor"/>
+                        <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
+                        <circle cx="8" cy="16" r="1.5" fill="currentColor"/>
+                        <circle cx="16" cy="16" r="1.5" fill="currentColor"/>
+                    </svg>
                 </div>
                 <div class="menu-text">
                     <div class="menu-title">Кости</div>
                     <div class="menu-desc">Больше или меньше?</div>
                 </div>
-                <span class="arrow">→</span>
+                <svg class="arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 6l6 6-6 6"/>
+                </svg>
             </div>
         </div>
     </div>
@@ -58,29 +96,34 @@
     <!-- Экран Профиль -->
     <div class="screen hidden" id="profile-screen">
         <div class="profile-card">
-            <div class="profile-avatar" id="profile-avatar">👤</div>
+            <div class="profile-avatar" id="profile-avatar">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
+                </svg>
+            </div>
             <div class="profile-name" id="profile-name">Гость</div>
             <div class="profile-level">Уровень 1</div>
             
             <div class="profile-stats">
                 <div class="stat-row">
-                    <span class="stat-label">💰 Баланс</span>
+                    <span class="stat-label">Баланс</span>
                     <span class="stat-value" id="stat-balance">0</span>
                 </div>
                 <div class="stat-row">
-                    <span class="stat-label">🎰 Игр сыграно</span>
+                    <span class="stat-label">Игр сыграно</span>
                     <span class="stat-value" id="stat-games">0</span>
                 </div>
                 <div class="stat-row">
-                    <span class="stat-label">🏆 Выигрышей</span>
+                    <span class="stat-label">Выигрышей</span>
                     <span class="stat-value stat-win" id="stat-wins">0</span>
                 </div>
                 <div class="stat-row">
-                    <span class="stat-label">💸 Проигрышей</span>
+                    <span class="stat-label">Проигрышей</span>
                     <span class="stat-value stat-lose" id="stat-losses">0</span>
                 </div>
                 <div class="stat-row">
-                    <span class="stat-label">📅 Дней в игре</span>
+                    <span class="stat-label">Дней в игре</span>
                     <span class="stat-value" id="stat-days">1</span>
                 </div>
             </div>
@@ -91,65 +134,105 @@
 
     <!-- Экран Слоты -->
     <div class="screen hidden" id="slots-screen">
-        <button class="back-btn" onclick="showGame('menu')">← Назад</button>
+        <button class="back-btn" onclick="showGame('menu')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            Назад
+        </button>
         <div class="slot-machine">
-            <h2 class="game-title">🎰 Слоты</h2>
+            <h2 class="game-title">Слоты</h2>
             <div class="slots-row">
-                <div class="slot" id="slot1">🎰</div>
-                <div class="slot" id="slot2">🎰</div>
-                <div class="slot" id="slot3">🎰</div>
+                <div class="slot" id="slot1">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35">
+                        <path d="M12 2L15 9H22L16 14L19 21L12 16L5 21L8 14L2 9H9L12 2Z"/>
+                    </svg>
+                </div>
+                <div class="slot" id="slot2">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35">
+                        <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                </div>
+                <div class="slot" id="slot3">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35">
+                        <path d="M12 2L15 9H22L16 14L19 21L12 16L5 21L8 14L2 9H9L12 2Z"/>
+                    </svg>
+                </div>
             </div>
             <div class="result-message" id="slot-result"></div>
             <button class="btn spin-btn" id="spin-btn" onclick="spin()">
                 <span>Крутить</span>
-                <span class="btn-cost">100 💰</span>
+                <span class="btn-cost">100 монет</span>
             </button>
         </div>
     </div>
 
     <!-- Экран Рулетка -->
     <div class="screen hidden" id="roulette-screen">
-        <button class="back-btn" onclick="showGame('menu')">← Назад</button>
-        <h2 class="game-title">🎡 Рулетка</h2>
+        <button class="back-btn" onclick="showGame('menu')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            Назад
+        </button>
+        <h2 class="game-title">Рулетка</h2>
         <div class="roulette-wheel" id="wheel">
             <div class="roulette-ball"></div>
             <div class="roulette-center">LUCKY</div>
         </div>
         <div class="result-message" id="roulette-result"></div>
         <div class="bet-buttons">
-            <button class="bet-btn bet-red" onclick="betRoulette('red')">🔴 Красное</button>
-            <button class="bet-btn bet-black" onclick="betRoulette('black')">⚫ Чёрное</button>
-            <button class="bet-btn bet-green" onclick="betRoulette('green')">🟢 Zero</button>
+            <button class="bet-btn bet-red" onclick="betRoulette('red')">Красное</button>
+            <button class="bet-btn bet-black" onclick="betRoulette('black')">Чёрное</button>
+            <button class="bet-btn bet-green" onclick="betRoulette('green')">Zero</button>
         </div>
-        <div class="bet-info">Ставка: 100 💰</div>
+        <div class="bet-info">Ставка: 100 монет</div>
     </div>
 
     <!-- Экран Кости -->
     <div class="screen hidden" id="dice-screen">
-        <button class="back-btn" onclick="showGame('menu')">← Назад</button>
-        <h2 class="game-title">🎲 Кости</h2>
+        <button class="back-btn" onclick="showGame('menu')">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 18l-6-6 6-6"/>
+            </svg>
+            Назад
+        </button>
+        <h2 class="game-title">Кости</h2>
         <div class="dice-container">
-            <div class="dice" id="dice-result">🎲</div>
+            <div class="dice" id="dice-result">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="80" height="80">
+                    <rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                    <circle cx="12" cy="12" r="2"/>
+                </svg>
+            </div>
         </div>
         <div class="result-message" id="dice-message">Угадай число от 1 до 6</div>
         <div class="bet-buttons">
-            <button class="bet-btn bet-low" onclick="betDice('low')">1-3</button>
-            <button class="bet-btn bet-high" onclick="betDice('high')">4-6</button>
+            <button class="bet-btn bet-low" onclick="betDice('low')">1 — 3</button>
+            <button class="bet-btn bet-high" onclick="betDice('high')">4 — 6</button>
         </div>
-        <div class="bet-info">Ставка: 100 💰</div>
+        <div class="bet-info">Ставка: 100 монет</div>
     </div>
 
-    <!-- Всплывающее уведомление -->
+    <!-- Тост -->
     <div class="toast" id="toast"></div>
 
     <!-- Нижняя навигация -->
     <div class="bottom-nav">
         <button class="active" id="nav-games" onclick="showGames()">
-            <span class="nav-icon">🎮</span>
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="6" width="20" height="12" rx="4"/>
+                <circle cx="8" cy="10" r="1" fill="currentColor"/>
+                <circle cx="16" cy="10" r="1" fill="currentColor"/>
+                <path d="M8 14h8" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
             <span class="nav-text">Игры</span>
         </button>
         <button id="nav-profile" onclick="showProfile()">
-            <span class="nav-icon">👤</span>
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
+            </svg>
             <span class="nav-text">Профиль</span>
         </button>
     </div>
