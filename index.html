@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lucky Casino</title>
+    <title>ClickApp</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -11,13 +11,13 @@
     <div class="header">
         <div class="header-top">
             <span class="logo">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 2L15 9H22L16 14L19 21L12 16L5 21L8 14L2 9H9L12 2Z"/>
                 </svg>
-                LUCKY
+                ClickApp
             </span>
             <div class="balance-box">
-                <svg class="balance-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <svg class="balance-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                     <circle cx="12" cy="12" r="10"/>
                     <path d="M8 12h8M10 8h4M10 16h4" stroke="#1a1a2e" stroke-width="2"/>
                 </svg>
@@ -30,7 +30,6 @@
     <div class="screen" id="games-screen">
         <h1 class="screen-title">Выбери игру</h1>
         <div class="menu-grid">
-            <!-- Слоты -->
             <div class="menu-item" onclick="showGame('slots')">
                 <div class="menu-icon-wrapper">
                     <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -39,7 +38,6 @@
                         <circle cx="16" cy="8" r="2.5" fill="currentColor"/>
                         <circle cx="8" cy="16" r="2.5" fill="currentColor"/>
                         <circle cx="16" cy="16" r="2.5" fill="currentColor"/>
-                        <path d="M12 3v18" stroke="currentColor" stroke-width="1"/>
                     </svg>
                 </div>
                 <div class="menu-text">
@@ -51,7 +49,6 @@
                 </svg>
             </div>
             
-            <!-- Рулетка -->
             <div class="menu-item" onclick="showGame('roulette')">
                 <div class="menu-icon-wrapper">
                     <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -70,7 +67,6 @@
                 </svg>
             </div>
             
-            <!-- Кости -->
             <div class="menu-item" onclick="showGame('dice')">
                 <div class="menu-icon-wrapper">
                     <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -96,14 +92,27 @@
     <!-- Экран Профиль -->
     <div class="screen hidden" id="profile-screen">
         <div class="profile-card">
+            <!-- Аватар из Telegram -->
             <div class="profile-avatar" id="profile-avatar">
                 <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
                     <circle cx="12" cy="8" r="4"/>
                     <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
                 </svg>
             </div>
+            
+            <!-- Ник -->
             <div class="profile-name" id="profile-name">Гость</div>
-            <div class="profile-level">Уровень 1</div>
+            
+            <!-- Кнопка смены ника -->
+            <button class="change-nick-btn" onclick="showChangeNick()">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 20h9"/>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+                Сменить ник (50 000)
+            </button>
+            
+            <div class="profile-level" id="profile-level">Уровень 1</div>
             
             <div class="profile-stats">
                 <div class="stat-row">
@@ -127,8 +136,19 @@
                     <span class="stat-value" id="stat-days">1</span>
                 </div>
             </div>
-            
-            <button class="btn reset-btn" onclick="resetProfile()">Сбросить профиль</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно смены ника -->
+    <div class="modal-overlay hidden" id="nick-modal">
+        <div class="modal">
+            <h3 class="modal-title">Смена ника</h3>
+            <p class="modal-desc">Стоимость: 50 000 монет</p>
+            <input type="text" class="nick-input" id="nick-input" placeholder="Введи новый ник" maxlength="20">
+            <div class="modal-buttons">
+                <button class="modal-btn cancel-btn" onclick="closeChangeNick()">Отмена</button>
+                <button class="modal-btn confirm-btn" onclick="changeNick()">Сменить</button>
+            </div>
         </div>
     </div>
 
@@ -143,21 +163,9 @@
         <div class="slot-machine">
             <h2 class="game-title">Слоты</h2>
             <div class="slots-row">
-                <div class="slot" id="slot1">
-                    <svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35">
-                        <path d="M12 2L15 9H22L16 14L19 21L12 16L5 21L8 14L2 9H9L12 2Z"/>
-                    </svg>
-                </div>
-                <div class="slot" id="slot2">
-                    <svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35">
-                        <circle cx="12" cy="12" r="10"/>
-                    </svg>
-                </div>
-                <div class="slot" id="slot3">
-                    <svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35">
-                        <path d="M12 2L15 9H22L16 14L19 21L12 16L5 21L8 14L2 9H9L12 2Z"/>
-                    </svg>
-                </div>
+                <div class="slot" id="slot1"></div>
+                <div class="slot" id="slot2"></div>
+                <div class="slot" id="slot3"></div>
             </div>
             <div class="result-message" id="slot-result"></div>
             <button class="btn spin-btn" id="spin-btn" onclick="spin()">
@@ -178,7 +186,7 @@
         <h2 class="game-title">Рулетка</h2>
         <div class="roulette-wheel" id="wheel">
             <div class="roulette-ball"></div>
-            <div class="roulette-center">LUCKY</div>
+            <div class="roulette-center">ClickApp</div>
         </div>
         <div class="result-message" id="roulette-result"></div>
         <div class="bet-buttons">
@@ -199,12 +207,7 @@
         </button>
         <h2 class="game-title">Кости</h2>
         <div class="dice-container">
-            <div class="dice" id="dice-result">
-                <svg viewBox="0 0 24 24" fill="currentColor" width="80" height="80">
-                    <rect x="3" y="3" width="18" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
-                    <circle cx="12" cy="12" r="2"/>
-                </svg>
-            </div>
+            <div class="dice" id="dice-result"></div>
         </div>
         <div class="result-message" id="dice-message">Угадай число от 1 до 6</div>
         <div class="bet-buttons">
