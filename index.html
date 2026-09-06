@@ -35,7 +35,7 @@
             </div>
             <div class="menu-item" onclick="showGame('roulette')">
                 <div class="menu-icon-wrapper">
-                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="12" y1="18" x2="12" y2="22"/></svg>
+                    <svg class="menu-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/></svg>
                 </div>
                 <div class="menu-text">
                     <div class="menu-title">Рулетка</div>
@@ -113,10 +113,7 @@
     </div>
 
     <div class="screen hidden" id="slots-screen">
-        <button class="back-btn" onclick="showGame('menu')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-            Назад
-        </button>
+        <button class="back-btn" onclick="showGame('menu')">← Назад</button>
         <div class="slot-machine">
             <h2 class="game-title">Слоты</h2>
             <div class="slots-row">
@@ -125,7 +122,7 @@
                 <div class="slot" id="slot3"></div>
             </div>
             <div class="result-message" id="slot-result"></div>
-            <button class="btn spin-btn" id="spin-btn" onclick="spin()">
+            <button class="btn" id="spin-btn" onclick="spin()">
                 <span>Крутить</span>
                 <span class="btn-cost">100 монет</span>
             </button>
@@ -133,16 +130,24 @@
     </div>
 
     <div class="screen hidden" id="roulette-screen">
-        <button class="back-btn" onclick="showGame('menu')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-            Назад
-        </button>
+        <button class="back-btn" onclick="showGame('menu')">← Назад</button>
         <h2 class="game-title">Рулетка</h2>
         <div class="roulette-container">
-            <div class="roulette-wheel" id="wheel">
-                <div class="roulette-ball"></div>
-                <div class="roulette-center">ClickApp</div>
-            </div>
+            <svg class="roulette-svg" viewBox="0 0 240 240" id="roulette-svg">
+                <defs>
+                    <radialGradient id="wheelGrad">
+                        <stop offset="0%" stop-color="#2a2a4a"/>
+                        <stop offset="100%" stop-color="#1a1a2e"/>
+                    </radialGradient>
+                </defs>
+                <g id="roulette-rotor">
+                    <circle cx="120" cy="120" r="110" fill="url(#wheelGrad)" stroke="#ffd700" stroke-width="3"/>
+                    <g id="roulette-cells"></g>
+                    <circle cx="120" cy="120" r="38" fill="#1a1a2e" stroke="#ffd700" stroke-width="2"/>
+                </g>
+                <text x="120" y="124" text-anchor="middle" fill="#ffd700" font-size="10" font-weight="900">ClickApp</text>
+                <line x1="120" y1="7" x2="120" y2="25" stroke="#ffd700" stroke-width="3"/>
+            </svg>
         </div>
         <div class="result-message" id="roulette-result"></div>
         <div class="bet-buttons">
@@ -154,10 +159,7 @@
     </div>
 
     <div class="screen hidden" id="dice-screen">
-        <button class="back-btn" onclick="showGame('menu')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-            Назад
-        </button>
+        <button class="back-btn" onclick="showGame('menu')">← Назад</button>
         <h2 class="game-title">Кости</h2>
         <div class="dice-container">
             <div class="dice" id="dice-result"></div>
@@ -174,7 +176,7 @@
 
     <div class="bottom-nav">
         <button class="active" id="nav-games" onclick="showGames()">
-            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="4"/><circle cx="8" cy="10" r="1" fill="currentColor"/><circle cx="16" cy="10" r="1" fill="currentColor"/><path d="M8 14h8" stroke="currentColor" stroke-width="1.5"/></svg>
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="4"/><circle cx="8" cy="10" r="1" fill="currentColor"/><circle cx="16" cy="10" r="1" fill="currentColor"/></svg>
             <span class="nav-text">Игры</span>
         </button>
         <button id="nav-profile" onclick="showProfile()">
@@ -184,5 +186,6 @@
     </div>
 
     <script src="script.js"></script>
+    <script src="roulette.js"></script>
 </body>
 </html>
