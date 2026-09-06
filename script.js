@@ -103,6 +103,21 @@ function spendCoins(amount) {
     return false;
 }
 
+// ============ ТОСТ УВЕДОМЛЕНИЯ ============
+function showToast(message, type = 'info') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'toast ' + type;
+    
+    setTimeout(() => {
+        toast.classList.add('show');
+    }, 10);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 2000);
+}
+
 // ============ НАВИГАЦИЯ ============
 function showGames() {
     const screens = ['games-screen', 'profile-screen', 'slots-screen', 'roulette-screen', 'dice-screen'];
@@ -156,7 +171,7 @@ let isSpinning = false;
 function spin() {
     if (isSpinning) return;
     if (!spendCoins(100)) {
-        showResult('slot-result', 'Недостаточно фишек!', 'lose');
+        showToast('Недостаточно фишек!', 'lose');
         return;
     }
 
@@ -165,52 +180,60 @@ function spin() {
     
     const spinBtn = document.getElementById('spin-btn');
     spinBtn.disabled = true;
-    spinBtn.textContent = 'Крутим...';
-
-    document.getElementById('slot-result').textContent = '';
-    document.getElementById('slot-result').className = 'result-message';
-
+    spinBtn.innerHTML = '<span>Крутим...</span>';
+    
     const slots = [1, 2, 3].map(i => document.getElementById('slot' + i));
+    
+    slots.forEach(slot => slot.classList.add('spinning'));
     
     let spinInterval = setInterval(() => {
         slots.forEach(slot => {
             slot.textContent = slotEmojis[Math.floor(Math.random() * slotEmojis.length)];
         });
-    }, 100);
+    }, 80);
 
     setTimeout(() => {
         clearInterval(spinInterval);
-
+        
         const result = slots.map(slot => {
             const emoji = slotEmojis[Math.floor(Math.random() * slotEmojis.length)];
             slot.textContent = emoji;
             return emoji;
         });
+        
+        slots.forEach(slot => slot.classList.remove('spinning'));
 
         if (result[0] === result[1] && result[1] === result[2]) {
             addCoins(500);
             userData.wins++;
+            slots.forEach(slot => slot.classList.add('winner'));
             showResult('slot-result', '🎉 ДЖЕКПОТ! +500 фишек!', 'win');
+            showToast('🎉 ДЖЕКПОТ! +500 💰', 'win');
         } else if (result[0] === result[1] || result[1] === result[2] || result[0] === result[2]) {
             addCoins(150);
             userData.wins++;
             showResult('slot-result', '✨ Две одинаковые! +150 фишек', 'win');
+            showToast('✨ +150 💰', 'win');
         } else {
             userData.losses++;
             showResult('slot-result', '😢 Попробуй ещё раз', 'lose');
         }
 
+        setTimeout(() => {
+            slots.forEach(slot => slot.classList.remove('winner'));
+        }, 1000);
+
         saveUserData();
         isSpinning = false;
         spinBtn.disabled = false;
-        spinBtn.textContent = 'Крутить (100)';
+        spinBtn.innerHTML = '<span>Крутить</span><span class="btn-cost">100 💰</span>';
     }, 2000);
 }
 
 // ============ РУЛЕТКА ============
 function betRoulette(color) {
     if (!spendCoins(100)) {
-        showResult('roulette-result', 'Недостаточно фишек!', 'lose');
+        showToast('Недостаточно фишек!', 'lose');
         return;
     }
 
@@ -218,7 +241,9 @@ function betRoulette(color) {
     const wheel = document.getElementById('wheel');
     const numbers = ['green', 'red', 'black', 'red', 'black', 'red', 'black', 'red', 'black'];
     const result = numbers[Math.floor(Math.random() * numbers.length)];
-    const rotation = 720 + Math.floor(Math.random() * 360);
+    const rotation = 1440 + Math.floor(Math.random() * 720);
+    
+    wheel.style.transition = 'transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)';
     wheel.style.transform = 'rotate(' + rotation + 'deg)';
 
     setTimeout(() => {
@@ -227,6 +252,7 @@ function betRoulette(color) {
             addCoins(winAmount);
             userData.wins++;
             showResult('roulette-result', '🎉 Выпало ' + result + '! +' + winAmount + ' фишек!', 'win');
+            showToast('🎉 +' + winAmount + ' 💰', 'win');
         } else {
             userData.losses++;
             showResult('roulette-result', '😢 Выпало ' + result + '. Повезёт в другой раз!', 'lose');
@@ -235,15 +261,19 @@ function betRoulette(color) {
         saveUserData();
         
         setTimeout(() => {
+            wheel.style.transition = 'none';
             wheel.style.transform = 'rotate(0deg)';
+            setTimeout(() => {
+                wheel.style.transition = 'transform 3s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            }, 50);
         }, 1000);
-    }, 3000);
+    }, 4000);
 }
 
 // ============ КОСТИ ============
 function betDice(choice) {
     if (!spendCoins(100)) {
-        showResult('dice-message', 'Недостаточно фишек!', 'lose');
+        showToast('Недостаточно фишек!', 'lose');
         return;
     }
 
@@ -251,12 +281,16 @@ function betDice(choice) {
     const dice = document.getElementById('dice-result');
     const diceEmojis = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
     
+    dice.classList.add('rolling');
+    
     let rollInterval = setInterval(() => {
         dice.textContent = diceEmojis[Math.floor(Math.random() * 6)];
     }, 100);
 
     setTimeout(() => {
         clearInterval(rollInterval);
+        dice.classList.remove('rolling');
+        dice.classList.add('result');
         
         const result = Math.floor(Math.random() * 6) + 1;
         dice.textContent = diceEmojis[result - 1];
@@ -267,10 +301,15 @@ function betDice(choice) {
             addCoins(200);
             userData.wins++;
             showResult('dice-message', '🎉 Выпало ' + result + '! +200 фишек!', 'win');
+            showToast('🎉 +200 💰', 'win');
         } else {
             userData.losses++;
             showResult('dice-message', '😢 Выпало ' + result + '. Не угадал!', 'lose');
         }
+        
+        setTimeout(() => {
+            dice.classList.remove('result');
+        }, 1000);
         
         saveUserData();
     }, 1500);
@@ -298,6 +337,7 @@ function resetProfile() {
         saveUserData();
         updateUI();
         showGames();
+        showToast('Профиль сброшен', 'info');
     }
 }
 
