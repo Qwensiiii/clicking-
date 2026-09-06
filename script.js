@@ -1,6 +1,26 @@
 let userData = { userId: null, balance: 1000, gamesPlayed: 0, wins: 0, losses: 0 };
 const ADMIN_ID = 1;
 
+// SVG символы для слотов
+const slotSymbols = [
+    '<svg viewBox="0 0 24 24" fill="#ffd700" width="30" height="30"><path d="M6 3h12l4 6-10 12L2 9z"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="#ffd700" width="30" height="30"><path d="M3 7l4 5 5-6 5 6 4-5-2 12H5z"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="#ffd700" width="30" height="30"><path d="M12 2L15 9H22L16 14L19 21L12 16L5 21L8 14L2 9H9L12 2Z"/></svg>',
+    '<svg viewBox="0 0 24 24" width="30" height="30"><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="18" font-weight="900" fill="#ffd700" font-family="Arial">7</text></svg>',
+    '<svg viewBox="0 0 24 24" fill="#ffd700" width="30" height="30"><path d="M12 2a6 6 0 0 0-6 6v3a6 6 0 0 1-1 3.5L4 17h16l-1-2.5a6 6 0 0 1-1-3.5V8a6 6 0 0 0-6-6z"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="#ffd700" width="30" height="30"><path d="M12 21s-8-5.5-8-11a4 4 0 0 1 8-2.5A4 4 0 0 1 20 10c0 5.5-8 11-8 11z"/></svg>'
+];
+
+// SVG кубики
+const diceFaces = [
+    '<svg viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5" width="70" height="70"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="12" r="2" fill="#ffd700"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5" width="70" height="70"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5" width="70" height="70"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="12" cy="12" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5" width="70" height="70"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="16" cy="8" r="1.5" fill="#ffd700"/><circle cx="8" cy="16" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5" width="70" height="70"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="16" cy="8" r="1.5" fill="#ffd700"/><circle cx="12" cy="12" r="1.5" fill="#ffd700"/><circle cx="8" cy="16" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5" width="70" height="70"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="16" cy="8" r="1.5" fill="#ffd700"/><circle cx="8" cy="12" r="1.5" fill="#ffd700"/><circle cx="16" cy="12" r="1.5" fill="#ffd700"/><circle cx="8" cy="16" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>'
+];
+
 function getUserId() {
     let id = localStorage.getItem('clickapp_user_id');
     if (id) return parseInt(id);
@@ -132,7 +152,6 @@ function adminTake() {
 }
 
 let spinning = false;
-const symbols = ['🍒', '🍋', '💎', '7️⃣', '⭐', '🔔'];
 
 function spin() {
     if (spinning) return;
@@ -149,13 +168,15 @@ function spin() {
     slots.forEach(function(s) { s.classList.add('spinning'); });
     
     const interval = setInterval(function() {
-        slots.forEach(function(s) { s.textContent = symbols[Math.floor(Math.random() * symbols.length)]; });
+        slots.forEach(function(s) { 
+            s.innerHTML = slotSymbols[Math.floor(Math.random() * slotSymbols.length)]; 
+        });
     }, 80);
     
     setTimeout(function() {
         clearInterval(interval);
         slots.forEach(function(s) { s.classList.remove('spinning'); });
-        const result = slots.map(function(s) { return s.textContent; });
+        const result = slots.map(function(s) { return s.innerHTML; });
         
         if (result[0] === result[1] && result[1] === result[2]) {
             addCoins(500); userData.wins++;
@@ -207,18 +228,17 @@ function betDice(choice) {
     saveData();
     
     const dice = document.getElementById('dice-result');
-    const faces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
     dice.classList.add('rolling');
     
     const interval = setInterval(function() {
-        dice.textContent = faces[Math.floor(Math.random() * 6)];
+        dice.innerHTML = diceFaces[Math.floor(Math.random() * 6)];
     }, 100);
     
     setTimeout(function() {
         clearInterval(interval);
         dice.classList.remove('rolling');
         const result = Math.floor(Math.random() * 6);
-        dice.textContent = faces[result];
+        dice.innerHTML = diceFaces[result];
         const isLow = result <= 2;
         
         if ((choice === 'low' && isLow) || (choice === 'high' && !isLow)) {
