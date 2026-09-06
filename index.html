@@ -4,206 +4,401 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ClickApp</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { background: #0f0c29; height: 100vh; display: flex; flex-direction: column; font-family: sans-serif; color: white; overflow: hidden; }
+        .header { background: #1a1a2e; padding: 15px; text-align: center; border-bottom: 2px solid #ffd700; }
+        .balance { color: #ffd700; font-size: 20px; font-weight: bold; }
+        .screen { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        .hidden { display: none !important; }
+        .menu-grid { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 350px; }
+        .menu-item { background: #2a2a4a; border-radius: 15px; padding: 18px; cursor: pointer; text-align: center; font-size: 18px; }
+        .menu-item:active { transform: scale(0.95); }
+        .back-btn { background: #333; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; margin-bottom: 15px; align-self: flex-start; }
+        .btn { background: #ffd700; color: #1a1a2e; border: none; padding: 15px 30px; border-radius: 12px; font-size: 17px; font-weight: bold; cursor: pointer; width: 100%; max-width: 280px; }
+        .btn:disabled { background: #555; color: #999; }
+        .slots-row { display: flex; gap: 10px; margin: 20px 0; }
+        .slot { width: 70px; height: 70px; background: #0f0f1a; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 30px; border: 2px solid #ffd700; }
+        .bet-buttons { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; justify-content: center; }
+        .bet-btn { padding: 10px 18px; border-radius: 10px; border: none; font-size: 14px; cursor: pointer; font-weight: bold; }
+        .bet-red { background: #cc0000; color: white; }
+        .bet-black { background: #333; color: white; }
+        .bet-green { background: #006600; color: white; }
+        .bet-low { background: #333; color: white; }
+        .bet-high { background: #ffd700; color: #1a1a2e; }
+        .result-message { font-size: 18px; margin: 12px; min-height: 25px; text-align: center; font-weight: bold; }
+        .win { color: #00ff00; }
+        .lose { color: #ff4444; }
+        .profile-card { background: #2a2a4a; border-radius: 18px; padding: 25px; width: 100%; max-width: 340px; text-align: center; }
+        .profile-avatar { width: 70px; height: 70px; border-radius: 50%; background: #ffd700; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 35px; overflow: hidden; }
+        .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-name { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+        .stat-row { display: flex; justify-content: space-between; padding: 10px; background: #1a1a2e; border-radius: 8px; margin-bottom: 6px; }
+        .admin-btn { background: #cc0000; color: white; padding: 12px 20px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; margin-top: 15px; width: 100%; }
+        .bottom-nav { display: flex; background: #1a1a2e; border-top: 1px solid #333; }
+        .bottom-nav button { flex: 1; background: none; border: none; color: #999; padding: 12px; cursor: pointer; font-size: 16px; }
+        .bottom-nav button.active { color: #ffd700; }
+        .toast { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); padding: 10px 18px; border-radius: 10px; font-weight: bold; z-index: 100; opacity: 0; transition: all 0.3s; }
+        .toast.show { opacity: 1; }
+        .toast.win { background: #00aa00; color: white; }
+        .toast.lose { background: #cc0000; color: white; }
+        .toast.info { background: #ffd700; color: #1a1a2e; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 50; }
+        .modal { background: #2a2a4a; border-radius: 15px; padding: 20px; width: 90%; max-width: 300px; text-align: center; }
+        .text-input { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #444; background: #1a1a2e; color: white; text-align: center; margin-bottom: 8px; font-size: 14px; }
+        .modal-btn { padding: 10px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; }
+    </style>
 </head>
 <body>
     <div class="header">
-        <div class="header-top">
-            <span class="logo">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15 9H22L16 14L19 21L12 16L5 21L8 14L2 9H9L12 2Z"/></svg>
-                ClickApp
-            </span>
-            <div class="balance-box">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="color:#ffd700"><circle cx="12" cy="12" r="10"/></svg>
-                <span class="balance" id="balance">1000</span>
-            </div>
-        </div>
+        <div class="balance">💰 <span id="balance">1000</span></div>
     </div>
 
-    <!-- ЭКРАН ИГРЫ -->
     <div class="screen" id="games-screen">
-        <h1 class="screen-title">Выбери игру</h1>
+        <h2 style="margin-bottom:20px;">Выбери игру</h2>
         <div class="menu-grid">
-            <div class="menu-item" onclick="showGame('slots')">
-                <div class="menu-icon-box">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5" width="28" height="28"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="2.5" fill="#ffd700"/><circle cx="16" cy="8" r="2.5" fill="#ffd700"/><circle cx="8" cy="16" r="2.5" fill="#ffd700"/><circle cx="16" cy="16" r="2.5" fill="#ffd700"/></svg>
-                </div>
-                <div class="menu-text">
-                    <div class="menu-title">Слоты</div>
-                    <div class="menu-desc">Три одинаковых — джекпот!</div>
-                </div>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
-            </div>
-            <div class="menu-item" onclick="showGame('roulette')">
-                <div class="menu-icon-box">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5" width="28" height="28"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/></svg>
-                </div>
-                <div class="menu-text">
-                    <div class="menu-title">Рулетка</div>
-                    <div class="menu-desc">Ставь на цвет — выигрывай!</div>
-                </div>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
-            </div>
-            <div class="menu-item" onclick="showGame('dice')">
-                <div class="menu-icon-box">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5" width="28" height="28"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="16" cy="8" r="1.5" fill="#ffd700"/><circle cx="12" cy="12" r="1.5" fill="#ffd700"/><circle cx="8" cy="16" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>
-                </div>
-                <div class="menu-text">
-                    <div class="menu-title">Кости</div>
-                    <div class="menu-desc">Больше или меньше?</div>
-                </div>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
-            </div>
+            <div class="menu-item" onclick="showGame('slots')">🎰 Слоты</div>
+            <div class="menu-item" onclick="showGame('roulette')">🎡 Рулетка</div>
+            <div class="menu-item" onclick="showGame('dice')">🎲 Кости</div>
         </div>
     </div>
 
-    <!-- ЭКРАН ПРОФИЛЬ -->
     <div class="screen hidden" id="profile-screen">
         <div class="profile-card">
-            <div class="profile-avatar" id="profile-avatar">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="#1a1a2e"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
-            </div>
+            <div class="profile-avatar" id="profile-avatar">👤</div>
             <div class="profile-name" id="profile-name">Гость</div>
-            <button class="change-nick-btn" onclick="showChangeNick()">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                Сменить ник (50 000)
-            </button>
-            <div class="profile-level" id="profile-level">Уровень 1</div>
-            <div class="profile-stats">
-                <div class="stat-row"><span class="stat-label">Баланс</span><span class="stat-value" id="stat-balance">0</span></div>
-                <div class="stat-row"><span class="stat-label">Игр сыграно</span><span class="stat-value" id="stat-games">0</span></div>
-                <div class="stat-row"><span class="stat-label">Выигрышей</span><span class="stat-value stat-win" id="stat-wins">0</span></div>
-                <div class="stat-row"><span class="stat-label">Проигрышей</span><span class="stat-value stat-lose" id="stat-losses">0</span></div>
-                <div class="stat-row"><span class="stat-label">Дней в игре</span><span class="stat-value" id="stat-days">1</span></div>
-            </div>
-            <button class="admin-btn hidden" id="admin-btn" onclick="showAdminPanel()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                Админ панель
-            </button>
+            <div class="stat-row"><span>Баланс</span><span id="stat-balance">0</span></div>
+            <div class="stat-row"><span>Игр</span><span id="stat-games">0</span></div>
+            <div class="stat-row"><span>Побед</span><span id="stat-wins">0</span></div>
+            <div class="stat-row"><span>Поражений</span><span id="stat-losses">0</span></div>
+            <div style="font-size:11px;color:#666;margin:10px 0;" id="debug-id">ID: —</div>
+            <button class="admin-btn" id="admin-btn" onclick="showAdmin()">🔑 АДМИН ПАНЕЛЬ</button>
         </div>
     </div>
 
-    <!-- МОДАЛКА СМЕНЫ НИКА -->
-    <div class="modal-overlay hidden" id="nick-modal">
-        <div class="modal">
-            <h3 class="modal-title">Смена ника</h3>
-            <p class="modal-desc">Стоимость: 50 000 монет</p>
-            <input type="text" class="text-input" id="nick-input" placeholder="Введи новый ник" maxlength="20">
-            <div class="modal-buttons">
-                <button class="modal-btn cancel-btn" onclick="closeChangeNick()">Отмена</button>
-                <button class="modal-btn confirm-btn" onclick="changeNick()">Сменить</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- МОДАЛКА АДМИНА -->
-    <div class="modal-overlay hidden" id="admin-modal">
-        <div class="modal">
-            <h3 class="modal-title">Админ панель</h3>
-            <input type="text" class="text-input" id="admin-user-id" placeholder="ID пользователя">
-            <input type="number" class="text-input" id="admin-amount" placeholder="Сумма монет">
-            <div class="admin-buttons">
-                <button class="admin-give-btn" onclick="adminGiveCoins()">+ Выдать</button>
-                <button class="admin-take-btn" onclick="adminRemoveCoins()">- Забрать</button>
-            </div>
-            <div class="admin-info">
-                <div>Пользователей: <span id="admin-total-users">0</span></div>
-                <div>Твой ID: <span id="admin-my-id">—</span></div>
-            </div>
-            <button class="modal-btn cancel-btn" onclick="closeAdminPanel()">Закрыть</button>
-        </div>
-    </div>
-
-    <!-- ЭКРАН СЛОТЫ -->
     <div class="screen hidden" id="slots-screen">
-        <button class="back-btn" onclick="showGame('menu')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-            Назад
-        </button>
-        <div class="game-box">
-            <h2 class="game-title">Слоты</h2>
-            <div class="slots-row">
-                <div class="slot" id="slot1"></div>
-                <div class="slot" id="slot2"></div>
-                <div class="slot" id="slot3"></div>
-            </div>
-            <div class="result-message" id="slot-result"></div>
-            <button class="btn" id="spin-btn" onclick="spin()">
-                <span>Крутить</span>
-                <span class="btn-cost">100 монет</span>
-            </button>
+        <button class="back-btn" onclick="showGame('menu')">← Назад</button>
+        <h2 style="margin-bottom:15px;">Слоты</h2>
+        <div class="slots-row">
+            <div class="slot" id="slot1">🎰</div>
+            <div class="slot" id="slot2">🎰</div>
+            <div class="slot" id="slot3">🎰</div>
         </div>
+        <div class="result-message" id="slot-result"></div>
+        <button class="btn" id="spin-btn" onclick="spin()">Крутить (100)</button>
     </div>
 
-    <!-- ЭКРАН РУЛЕТКА -->
     <div class="screen hidden" id="roulette-screen">
-        <button class="back-btn" onclick="showGame('menu')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-            Назад
-        </button>
-        <h2 class="game-title">Рулетка</h2>
-        <div class="roulette-wrap">
-            <svg viewBox="0 0 240 240" class="roulette-svg">
-                <circle cx="120" cy="120" r="110" fill="#1a1a2e" stroke="#ffd700" stroke-width="4"/>
-                <g id="roulette-rotor">
-                    <g id="roulette-cells"></g>
-                </g>
-                <circle cx="120" cy="120" r="38" fill="#1a1a2e" stroke="#ffd700" stroke-width="2"/>
-                <text x="120" y="124" text-anchor="middle" fill="#ffd700" font-size="11" font-weight="900">ClickApp</text>
-                <polygon points="120,7 115,20 125,20" fill="#ffd700"/>
-            </svg>
-        </div>
+        <button class="back-btn" onclick="showGame('menu')">← Назад</button>
+        <h2 style="margin-bottom:15px;">Рулетка</h2>
+        <div style="font-size:80px;margin:20px;" id="roulette-wheel">🎡</div>
         <div class="result-message" id="roulette-result"></div>
         <div class="bet-buttons">
-            <button class="bet-btn bet-red" onclick="betRoulette('red')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="10"/></svg>
-                Красное
-            </button>
-            <button class="bet-btn bet-black" onclick="betRoulette('black')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="10"/></svg>
-                Чёрное
-            </button>
-            <button class="bet-btn bet-green" onclick="betRoulette('zero')">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="10"/></svg>
-                Zero
-            </button>
+            <button class="bet-btn bet-red" onclick="betRoulette('red')">Красное</button>
+            <button class="bet-btn bet-black" onclick="betRoulette('black')">Чёрное</button>
+            <button class="bet-btn bet-green" onclick="betRoulette('zero')">Zero</button>
         </div>
-        <div class="bet-info">Ставка: 100 | Выигрыш: x2 (Zero x14)</div>
     </div>
 
-    <!-- ЭКРАН КОСТИ -->
     <div class="screen hidden" id="dice-screen">
-        <button class="back-btn" onclick="showGame('menu')">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
-            Назад
-        </button>
-        <h2 class="game-title">Кости</h2>
-        <div class="dice-box" id="dice-result">
-            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="12" r="2" fill="#ffd700"/></svg>
-        </div>
-        <div class="result-message" id="dice-message">Угадай число от 1 до 6</div>
+        <button class="back-btn" onclick="showGame('menu')">← Назад</button>
+        <h2 style="margin-bottom:15px;">Кости</h2>
+        <div style="font-size:80px;margin:20px;" id="dice-result">🎲</div>
+        <div class="result-message" id="dice-message">Угадай 1-3 или 4-6</div>
         <div class="bet-buttons">
-            <button class="bet-btn bet-low" onclick="betDice('low')">1 — 3</button>
-            <button class="bet-btn bet-high" onclick="betDice('high')">4 — 6</button>
+            <button class="bet-btn bet-low" onclick="betDice('low')">1-3</button>
+            <button class="bet-btn bet-high" onclick="betDice('high')">4-6</button>
         </div>
-        <div class="bet-info">Ставка: 100 монет</div>
+    </div>
+
+    <div class="modal-overlay hidden" id="admin-modal">
+        <div class="modal">
+            <h3 style="margin-bottom:12px;">Админ</h3>
+            <input class="text-input" id="admin-user-id" placeholder="ID пользователя">
+            <input class="text-input" id="admin-amount" placeholder="Сумма" type="number">
+            <button class="modal-btn" style="background:#00aa00;color:white;width:100%;margin-bottom:8px;" onclick="adminGive()">+ Выдать</button>
+            <button class="modal-btn" style="background:#cc0000;color:white;width:100%;margin-bottom:8px;" onclick="adminTake()">- Забрать</button>
+            <button class="modal-btn" style="background:#333;color:white;width:100%;" onclick="closeAdmin()">Закрыть</button>
+        </div>
     </div>
 
     <div class="toast" id="toast"></div>
 
-    <!-- НИЖНЯЯ НАВИГАЦИЯ -->
     <div class="bottom-nav">
-        <button class="active" id="nav-games" onclick="showGames()">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="4"/><circle cx="8" cy="10" r="1" fill="currentColor"/><circle cx="16" cy="10" r="1" fill="currentColor"/></svg>
-            <span class="nav-text">Игры</span>
-        </button>
-        <button id="nav-profile" onclick="showProfile()">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
-            <span class="nav-text">Профиль</span>
-        </button>
+        <button class="active" id="nav-games" onclick="showGames()">🎮 Игры</button>
+        <button id="nav-profile" onclick="showProfile()">👤 Профиль</button>
     </div>
 
-    <script src="script.js"></script>
-    <script src="roulette.js"></script>
+    <script>
+        // ============ ДАННЫЕ ============
+        let userData = {
+            userId: null,
+            firstName: '',
+            balance: 1000,
+            gamesPlayed: 0,
+            wins: 0,
+            losses: 0
+        };
+
+        // ============ ИНИЦИАЛИЗАЦИЯ ============
+        function init() {
+            if (window.Telegram?.WebApp) {
+                const tg = window.Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+                const user = tg.initDataUnsafe?.user;
+                if (user) {
+                    userData.userId = user.id;
+                    userData.firstName = user.first_name || '';
+                }
+            }
+            loadData();
+            updateUI();
+            showGames();
+        }
+
+        // ============ СОХРАНЕНИЕ ============
+        function getKey() {
+            return 'clickapp_' + (userData.userId || 'guest');
+        }
+
+        function loadData() {
+            const data = localStorage.getItem(getKey());
+            if (data) {
+                try {
+                    userData = { ...userData, ...JSON.parse(data) };
+                } catch (e) {}
+            } else {
+                saveData();
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem(getKey(), JSON.stringify(userData));
+        }
+
+        // ============ UI ============
+        function updateUI() {
+            document.getElementById('balance').textContent = userData.balance;
+            document.getElementById('stat-balance').textContent = userData.balance;
+            document.getElementById('stat-games').textContent = userData.gamesPlayed;
+            document.getElementById('stat-wins').textContent = userData.wins;
+            document.getElementById('stat-losses').textContent = userData.losses;
+            document.getElementById('profile-name').textContent = userData.firstName || 'Гость';
+            document.getElementById('debug-id').textContent = 'ID: ' + (userData.userId || 'не определён');
+            
+            // АДМИН КНОПКА ВСЕГДА ВИДНА
+            document.getElementById('admin-btn').classList.remove('hidden');
+        }
+
+        function addCoins(n) {
+            userData.balance += n;
+            saveData();
+            updateUI();
+        }
+
+        function spendCoins(n) {
+            if (userData.balance >= n) {
+                userData.balance -= n;
+                saveData();
+                updateUI();
+                return true;
+            }
+            return false;
+        }
+
+        // ============ НАВИГАЦИЯ ============
+        function hideAll() {
+            ['games-screen', 'profile-screen', 'slots-screen', 'roulette-screen', 'dice-screen'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+        }
+
+        function showGames() {
+            hideAll();
+            document.getElementById('games-screen').classList.remove('hidden');
+            document.getElementById('nav-games').classList.add('active');
+            document.getElementById('nav-profile').classList.remove('active');
+        }
+
+        function showProfile() {
+            hideAll();
+            document.getElementById('profile-screen').classList.remove('hidden');
+            document.getElementById('nav-games').classList.remove('active');
+            document.getElementById('nav-profile').classList.add('active');
+            updateUI();
+        }
+
+        function showGame(game) {
+            hideAll();
+            if (game === 'menu') {
+                document.getElementById('games-screen').classList.remove('hidden');
+            } else {
+                document.getElementById(game + '-screen').classList.remove('hidden');
+            }
+        }
+
+        // ============ АДМИН ============
+        function showAdmin() {
+            document.getElementById('admin-modal').classList.remove('hidden');
+        }
+
+        function closeAdmin() {
+            document.getElementById('admin-modal').classList.add('hidden');
+        }
+
+        function adminGive() {
+            const id = document.getElementById('admin-user-id').value.trim();
+            const amount = parseInt(document.getElementById('admin-amount').value);
+            if (!id || !amount || amount <= 0) { showToast('Введи ID и сумму!', 'lose'); return; }
+            
+            const key = 'clickapp_' + id;
+            const data = localStorage.getItem(key);
+            if (data) {
+                const parsed = JSON.parse(data);
+                parsed.balance += amount;
+                localStorage.setItem(key, JSON.stringify(parsed));
+            } else {
+                localStorage.setItem(key, JSON.stringify({ userId: parseInt(id), balance: 1000 + amount, gamesPlayed: 0, wins: 0, losses: 0 }));
+            }
+            showToast('Выдано ' + amount + ' монет!', 'win');
+        }
+
+        function adminTake() {
+            const id = document.getElementById('admin-user-id').value.trim();
+            const amount = parseInt(document.getElementById('admin-amount').value);
+            if (!id || !amount || amount <= 0) { showToast('Введи ID и сумму!', 'lose'); return; }
+            
+            const key = 'clickapp_' + id;
+            const data = localStorage.getItem(key);
+            if (data) {
+                const parsed = JSON.parse(data);
+                parsed.balance = Math.max(0, parsed.balance - amount);
+                localStorage.setItem(key, JSON.stringify(parsed));
+                showToast('Забрано ' + amount + ' монет!', 'info');
+            } else {
+                showToast('Пользователь не найден!', 'lose');
+            }
+        }
+
+        // ============ СЛОТЫ ============
+        let spinning = false;
+        const symbols = ['🍒', '🍋', '💎', '7️⃣', '⭐', '🔔'];
+
+        function spin() {
+            if (spinning) return;
+            if (!spendCoins(100)) { showToast('Недостаточно монет!', 'lose'); return; }
+            
+            spinning = true;
+            userData.gamesPlayed++;
+            const btn = document.getElementById('spin-btn');
+            btn.disabled = true;
+            
+            const slots = [1, 2, 3].map(i => document.getElementById('slot' + i));
+            
+            const interval = setInterval(() => {
+                slots.forEach(s => s.textContent = symbols[Math.floor(Math.random() * symbols.length)]);
+            }, 80);
+            
+            setTimeout(() => {
+                clearInterval(interval);
+                const result = slots.map(s => s.textContent);
+                
+                if (result[0] === result[1] && result[1] === result[2]) {
+                    addCoins(500);
+                    userData.wins++;
+                    showResult('slot-result', 'ДЖЕКПОТ! +500!', 'win');
+                } else if (result[0] === result[1] || result[1] === result[2] || result[0] === result[2]) {
+                    addCoins(150);
+                    userData.wins++;
+                    showResult('slot-result', '+150!', 'win');
+                } else {
+                    userData.losses++;
+                    showResult('slot-result', 'Мимо!', 'lose');
+                }
+                
+                saveData();
+                spinning = false;
+                btn.disabled = false;
+            }, 2000);
+        }
+
+        // ============ РУЛЕТКА ============
+        function betRoulette(color) {
+            if (!spendCoins(100)) { showToast('Недостаточно монет!', 'lose'); return; }
+            userData.gamesPlayed++;
+            
+            const wheel = document.getElementById('roulette-wheel');
+            wheel.style.animation = 'none';
+            setTimeout(() => wheel.style.animation = 'spin 1s linear infinite', 10);
+            
+            setTimeout(() => {
+                wheel.style.animation = 'none';
+                const r = Math.random();
+                let result;
+                if (r < 0.03) result = 'zero';
+                else if (r < 0.5) result = 'red';
+                else result = 'black';
+                
+                if ((color === 'zero' && result === 'zero') || (color === 'red' && result === 'red') || (color === 'black' && result === 'black')) {
+                    const win = color === 'zero' ? 1400 : 200;
+                    addCoins(win);
+                    userData.wins++;
+                    showResult('roulette-result', 'Выпало ' + result + '! +' + win + '!', 'win');
+                } else {
+                    userData.losses++;
+                    showResult('roulette-result', 'Выпало ' + result + '. Мимо!', 'lose');
+                }
+                saveData();
+            }, 2000);
+        }
+
+        // ============ КОСТИ ============
+        function betDice(choice) {
+            if (!spendCoins(100)) { showToast('Недостаточно монет!', 'lose'); return; }
+            userData.gamesPlayed++;
+            
+            const dice = document.getElementById('dice-result');
+            const faces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+            
+            const interval = setInterval(() => {
+                dice.textContent = faces[Math.floor(Math.random() * 6)];
+            }, 100);
+            
+            setTimeout(() => {
+                clearInterval(interval);
+                const result = Math.floor(Math.random() * 6);
+                dice.textContent = faces[result];
+                
+                const isLow = result <= 2;
+                if ((choice === 'low' && isLow) || (choice === 'high' && !isLow)) {
+                    addCoins(200);
+                    userData.wins++;
+                    showResult('dice-message', 'Выпало ' + (result + 1) + '! +200!', 'win');
+                } else {
+                    userData.losses++;
+                    showResult('dice-message', 'Выпало ' + (result + 1) + '. Мимо!', 'lose');
+                }
+                saveData();
+            }, 1500);
+        }
+
+        // ============ ВСПОМОГАТЕЛЬНОЕ ============
+        function showResult(id, msg, type) {
+            const el = document.getElementById(id);
+            el.textContent = msg;
+            el.className = 'result-message ' + type;
+        }
+
+        function showToast(msg, type) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = 'toast ' + type + ' show';
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        // ============ ЗАПУСК ============
+        init();
+    </script>
 </body>
 </html>
