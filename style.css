@@ -11,17 +11,18 @@ body {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    font-family: -apple-system, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     color: white;
     overflow: hidden;
     touch-action: manipulation;
 }
 
-/* Шапка */
 .header {
-    background: rgba(26, 26, 46, 0.9);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     padding: 15px 20px;
-    border-bottom: 2px solid #ffd700;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .header-top {
@@ -35,23 +36,40 @@ body {
 .logo {
     font-size: 18px;
     font-weight: 900;
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.logo svg {
     color: #ffd700;
+    -webkit-text-fill-color: initial;
 }
 
 .balance-box {
     background: rgba(255, 215, 0, 0.15);
     border: 1px solid rgba(255, 215, 0, 0.3);
     border-radius: 20px;
-    padding: 8px 16px;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.balance-icon {
+    color: #ffd700;
 }
 
 .balance {
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 700;
     color: #ffd700;
 }
 
-/* Экраны */
 .screen {
     flex: 1;
     display: flex;
@@ -60,6 +78,12 @@ body {
     justify-content: center;
     padding: 20px;
     overflow-y: auto;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .hidden {
@@ -72,7 +96,6 @@ body {
     margin-bottom: 20px;
 }
 
-/* Меню */
 .menu-grid {
     display: flex;
     flex-direction: column;
@@ -98,8 +121,25 @@ body {
     border-color: #ffd700;
 }
 
+.menu-icon-wrapper {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 215, 0, 0.15);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
 .menu-icon {
-    font-size: 30px;
+    width: 28px;
+    height: 28px;
+    color: #ffd700;
+}
+
+.menu-text {
+    flex: 1;
 }
 
 .menu-title {
@@ -110,9 +150,14 @@ body {
 .menu-desc {
     font-size: 12px;
     color: #a0a0b0;
+    margin-top: 3px;
 }
 
-/* Кнопки */
+.arrow {
+    color: #ffd700;
+    flex-shrink: 0;
+}
+
 .back-btn {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
@@ -123,6 +168,9 @@ body {
     margin-bottom: 15px;
     font-size: 13px;
     align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .btn {
@@ -136,19 +184,17 @@ body {
     cursor: pointer;
     width: 100%;
     max-width: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
 }
 
-.btn:active {
-    transform: scale(0.95);
-}
+.btn:active { transform: scale(0.95); }
+.btn:disabled { background: #555; color: #999; }
+.btn-cost { font-size: 12px; font-weight: 500; }
 
-.btn:disabled {
-    background: #555;
-    color: #999;
-}
-
-/* Игровые боксы */
-.game-box {
+.slot-machine {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 22px;
@@ -164,7 +210,6 @@ body {
     margin-bottom: 15px;
 }
 
-/* Слоты */
 .slots-row {
     display: flex;
     justify-content: center;
@@ -180,8 +225,9 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 35px;
+    font-size: 30px;
     border: 2px solid rgba(255, 215, 0, 0.3);
+    color: #ffd700;
 }
 
 .slot.spinning {
@@ -194,26 +240,68 @@ body {
     100% { transform: translateY(-3px); }
 }
 
-/* Рулетка простая */
-.roulette-simple {
-    font-size: 100px;
+/* РУЛЕТКА — ОПТИМИЗИРОВАННАЯ */
+.roulette-container {
+    margin: 15px auto;
+}
+
+.roulette-wheel {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: conic-gradient(
+        #cc0000 0deg 45deg,
+        #1a1a1a 45deg 90deg,
+        #cc0000 90deg 135deg,
+        #1a1a1a 135deg 180deg,
+        #cc0000 180deg 225deg,
+        #1a1a1a 225deg 270deg,
+        #cc0000 270deg 315deg,
+        #1a1a1a 315deg 360deg
+    );
+    position: relative;
+    border: 5px solid #ffd700;
+    transition: transform 2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+}
+
+.roulette-ball {
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 50%;
+    border: 3px solid #ffd700;
+    z-index: 10;
+}
+
+.roulette-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: 900;
+    font-size: 11px;
+    color: #ffd700;
+    background: #1a1a2e;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ffd700;
+}
+
+.dice-container {
     margin: 20px 0;
-    transition: transform 2s ease-out;
 }
 
-.roulette-simple.spinning {
-    animation: rouletteSpin 0.1s linear infinite;
-}
-
-@keyframes rouletteSpin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* Кости */
 .dice {
     font-size: 80px;
-    margin: 20px 0;
 }
 
 .dice.rolling {
@@ -225,7 +313,6 @@ body {
     to { transform: rotate(360deg); }
 }
 
-/* Ставки */
 .bet-buttons {
     display: flex;
     gap: 8px;
@@ -243,10 +330,7 @@ body {
     font-weight: 700;
 }
 
-.bet-btn:active {
-    transform: scale(0.9);
-}
-
+.bet-btn:active { transform: scale(0.9); }
 .bet-red { background: #cc0000; color: white; }
 .bet-black { background: #333; color: white; }
 .bet-green { background: #006600; color: white; }
@@ -256,10 +340,9 @@ body {
 .bet-info {
     font-size: 13px;
     color: #a0a0b0;
-    margin-top: 5px;
+    margin-top: 4px;
 }
 
-/* Результаты */
 .result-message {
     font-size: 18px;
     margin: 12px;
@@ -271,7 +354,6 @@ body {
 .win { color: #00ff00; }
 .lose { color: #ff4444; }
 
-/* Профиль */
 .profile-card {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.15);
@@ -286,20 +368,20 @@ body {
     width: 80px;
     height: 80px;
     border-radius: 50%;
-    background: rgba(255, 215, 0, 0.2);
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 12px;
     font-size: 40px;
     overflow: hidden;
+    color: #1a1a2e;
 }
 
 .profile-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 50%;
 }
 
 .profile-name {
@@ -317,7 +399,10 @@ body {
     cursor: pointer;
     font-size: 12px;
     font-weight: 600;
-    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 0 auto 15px;
 }
 
 .profile-level {
@@ -353,7 +438,6 @@ body {
 .stat-win { color: #00ff00 !important; }
 .stat-lose { color: #ff4444 !important; }
 
-/* Админ */
 .admin-btn {
     background: linear-gradient(135deg, #ff4444, #cc0000);
     color: white;
@@ -363,12 +447,15 @@ body {
     cursor: pointer;
     font-size: 14px;
     font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 7px;
     margin: 15px auto 0;
     width: 100%;
     max-width: 250px;
+    justify-content: center;
 }
 
-/* Модальные окна */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -394,7 +481,7 @@ body {
 .modal-title {
     font-size: 18px;
     font-weight: 800;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
 }
 
 .modal-desc {
@@ -444,7 +531,6 @@ body {
     color: #1a1a2e;
 }
 
-/* Админ панель */
 .admin-actions {
     margin: 10px 0;
 }
@@ -487,7 +573,6 @@ body {
     line-height: 1.8;
 }
 
-/* Нижняя навигация */
 .bottom-nav {
     display: flex;
     background: rgba(26, 26, 46, 0.9);
@@ -499,18 +584,28 @@ body {
     background: none;
     border: none;
     color: #a0a0b0;
-    padding: 12px 5px;
+    padding: 11px 5px;
     cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
 }
 
 .bottom-nav button.active {
     color: #ffd700;
-    border-top: 2px solid #ffd700;
 }
 
-/* Тост */
+.nav-icon {
+    width: 21px;
+    height: 21px;
+}
+
+.nav-text {
+    font-size: 10px;
+    font-weight: 600;
+}
+
 .toast {
     position: fixed;
     top: 20px;
@@ -526,10 +621,7 @@ body {
     transition: all 0.3s;
 }
 
-.toast.show {
-    opacity: 1;
-}
-
+.toast.show { opacity: 1; }
 .toast.win { background: #00aa00; color: white; }
 .toast.lose { background: #ff4444; color: white; }
 .toast.info { background: #ffd700; color: #1a1a2e; }
