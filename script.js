@@ -3,6 +3,7 @@ let userData = {
     userId: null,
     username: 'Гость',
     firstName: '',
+    nickname: null,
     balance: 1000,
     gamesPlayed: 0,
     wins: 0,
@@ -12,30 +13,24 @@ let userData = {
     lastVisit: null
 };
 
-// ============ СИМВОЛЫ СЛОТОВ (SVG) ============
+// ============ СИМВОЛЫ СЛОТОВ ============
 const slotSymbols = [
-    // Бриллиант
-    '<svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21L8 9l4-6 4 6z"/></svg>',
-    // Корона
-    '<svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35"><path d="M3 7l4 5 5-6 5 6 4-5-2 12H5z"/></svg>',
-    // Звезда
-    '<svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35"><path d="M12 2L15 9H22L16 14L19 21L12 16L5 21L8 14L2 9H9L12 2Z"/></svg>',
-    // Семёрка
-    '<svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35"><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="22" font-weight="900" fill="currentColor" font-family="Arial">7</text></svg>',
-    // Колокольчик
-    '<svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35"><path d="M12 2a6 6 0 0 0-6 6v3a6 6 0 0 1-1 3.5L4 17h16l-1-2.5a6 6 0 0 1-1-3.5V8a6 6 0 0 0-6-6z"/><circle cx="12" cy="20" r="2"/></svg>',
-    // Сердце
-    '<svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35"><path d="M12 21s-8-5.5-8-11a4 4 0 0 1 8-2.5A4 4 0 0 1 20 10c0 5.5-8 11-8 11z"/></svg>'
+    '<svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21L8 9l4-6 4 6z"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32"><path d="M3 7l4 5 5-6 5 6 4-5-2 12H5z"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32"><path d="M12 2L15 9H22L16 14L19 21L12 16L5 21L8 14L2 9H9L12 2Z"/></svg>',
+    '<svg viewBox="0 0 24 24" width="32" height="32"><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="20" font-weight="900" fill="currentColor" font-family="Arial">7</text></svg>',
+    '<svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32"><path d="M12 2a6 6 0 0 0-6 6v3a6 6 0 0 1-1 3.5L4 17h16l-1-2.5a6 6 0 0 1-1-3.5V8a6 6 0 0 0-6-6z"/><circle cx="12" cy="20" r="2"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="currentColor" width="32" height="32"><path d="M12 21s-8-5.5-8-11a4 4 0 0 1 8-2.5A4 4 0 0 1 20 10c0 5.5-8 11-8 11z"/></svg>'
 ];
 
-// ============ КУБИК (SVG) ============
+// ============ КУБИК ============
 const diceFaces = [
-    '<svg viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>',
-    '<svg viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>',
-    '<svg viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>',
-    '<svg viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="8" r="1.5" fill="currentColor"/><circle cx="8" cy="16" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>',
-    '<svg viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="8" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="8" cy="16" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>',
-    '<svg viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="8" r="1.5" fill="currentColor"/><circle cx="8" cy="12" r="1.5" fill="currentColor"/><circle cx="16" cy="12" r="1.5" fill="currentColor"/><circle cx="8" cy="16" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>'
+    '<svg viewBox="0 0 24 24" width="70" height="70" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 24 24" width="70" height="70" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 24 24" width="70" height="70" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 24 24" width="70" height="70" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="8" r="1.5" fill="currentColor"/><circle cx="8" cy="16" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 24 24" width="70" height="70" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="8" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="8" cy="16" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 24 24" width="70" height="70" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="8" r="1.5" fill="currentColor"/><circle cx="8" cy="12" r="1.5" fill="currentColor"/><circle cx="16" cy="12" r="1.5" fill="currentColor"/><circle cx="8" cy="16" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>'
 ];
 
 // ============ ИНИЦИАЛИЗАЦИЯ ============
@@ -60,7 +55,7 @@ function init() {
 
 // ============ СОХРАНЕНИЕ ============
 function getStorageKey() {
-    return 'casino_data_' + (userData.userId || 'guest');
+    return 'clickapp_data_' + (userData.userId || 'guest');
 }
 
 function saveUserData() {
@@ -101,10 +96,28 @@ function updateUI() {
     const avatar = document.getElementById('profile-avatar');
     const name = document.getElementById('profile-name');
     
-    if (userData.firstName) {
-        avatar.innerHTML = userData.firstName[0].toUpperCase();
-        name.textContent = userData.firstName;
+    // Аватарка из Telegram
+    if (userData.userId && window.Telegram?.WebApp) {
+        const user = window.Telegram.WebApp.initDataUnsafe?.user;
+        if (user?.photo_url) {
+            avatar.innerHTML = '<img src="' + user.photo_url + '" alt="avatar">';
+        } else if (userData.firstName) {
+            avatar.innerHTML = userData.firstName[0].toUpperCase();
+        }
     }
+    
+    // Ник (кастомный или имя из Telegram)
+    if (userData.nickname) {
+        name.textContent = userData.nickname;
+    } else if (userData.firstName) {
+        name.textContent = userData.firstName;
+    } else {
+        name.textContent = 'Гость';
+    }
+    
+    // Уровень
+    const level = Math.floor(userData.gamesPlayed / 10) + 1;
+    document.getElementById('profile-level').textContent = 'Уровень ' + level;
     
     document.getElementById('stat-balance').textContent = userData.balance;
     document.getElementById('stat-games').textContent = userData.gamesPlayed;
@@ -127,6 +140,42 @@ function spendCoins(amount) {
         return true;
     }
     return false;
+}
+
+// ============ СМЕНА НИКА ============
+function showChangeNick() {
+    document.getElementById('nick-modal').classList.remove('hidden');
+    document.getElementById('nick-input').value = userData.nickname || '';
+    document.getElementById('nick-input').focus();
+}
+
+function closeChangeNick() {
+    document.getElementById('nick-modal').classList.add('hidden');
+}
+
+function changeNick() {
+    const newNick = document.getElementById('nick-input').value.trim();
+    
+    if (!newNick) {
+        showToast('Введи ник!', 'lose');
+        return;
+    }
+    
+    if (newNick.length > 20) {
+        showToast('Максимум 20 символов!', 'lose');
+        return;
+    }
+    
+    if (!spendCoins(50000)) {
+        showToast('Нужно 50 000 монет!', 'lose');
+        return;
+    }
+    
+    userData.nickname = newNick;
+    saveUserData();
+    updateUI();
+    closeChangeNick();
+    showToast('Ник изменён!', 'win');
 }
 
 // ============ ТОСТ ============
@@ -196,8 +245,7 @@ function spin() {
     
     let spinInterval = setInterval(() => {
         slots.forEach(slot => {
-            const randomSymbol = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
-            slot.innerHTML = randomSymbol;
+            slot.innerHTML = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
         });
     }, 80);
 
@@ -292,8 +340,7 @@ function betDice(choice) {
     dice.classList.add('rolling');
     
     let rollInterval = setInterval(() => {
-        const randomFace = diceFaces[Math.floor(Math.random() * 6)];
-        dice.innerHTML = randomFace;
+        dice.innerHTML = diceFaces[Math.floor(Math.random() * 6)];
     }, 100);
 
     setTimeout(() => {
@@ -329,25 +376,6 @@ function showResult(elementId, message, type) {
     const el = document.getElementById(elementId);
     el.textContent = message;
     el.className = 'result-message ' + type;
-}
-
-// ============ СБРОС ============
-function resetProfile() {
-    if (confirm('Точно сбросить весь прогресс?')) {
-        localStorage.removeItem(getStorageKey());
-        
-        userData.balance = 1000;
-        userData.gamesPlayed = 0;
-        userData.wins = 0;
-        userData.losses = 0;
-        userData.firstVisit = new Date().toISOString();
-        userData.daysPlayed = 1;
-        
-        saveUserData();
-        updateUI();
-        showGames();
-        showToast('Профиль сброшен', 'info');
-    }
 }
 
 // ============ ЗАПУСК ============
