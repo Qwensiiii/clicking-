@@ -51,10 +51,10 @@ body {
     display: none !important;
 }
 
-/* Меню */
+/* Меню игр */
 .menu-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 15px;
     width: 100%;
     max-width: 350px;
@@ -63,11 +63,14 @@ body {
 .menu-item {
     background: #2a2a4a;
     border-radius: 20px;
-    padding: 30px 20px;
+    padding: 20px;
     text-align: center;
     cursor: pointer;
     transition: transform 0.1s, background 0.2s;
     border: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
 .menu-item:active {
@@ -76,8 +79,12 @@ body {
 }
 
 .menu-icon {
-    font-size: 50px;
-    margin-bottom: 10px;
+    font-size: 40px;
+    width: 60px;
+}
+
+.menu-text {
+    text-align: left;
 }
 
 .menu-title {
@@ -284,4 +291,37 @@ body {
 .stat-value {
     font-weight: bold;
     color: #ffd700;
+}
+
+/* Нижняя навигация */
+.bottom-nav {
+    display: flex;
+    background: #1a1a2e;
+    border-top: 2px solid #333;
+}
+
+.bottom-nav button {
+    flex: 1;
+    background: none;
+    border: none;
+    color: white;
+    padding: 12px 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.bottom-nav button.active {
+    background: #2a2a4a;
+    border-top: 2px solid #ffd700;
+}
+
+.nav-icon {
+    font-size: 24px;
+    display: block;
+}
+
+.nav-text {
+    font-size: 12px;
+    display: block;
+    margin-top: 3px;
 }
