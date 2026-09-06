@@ -1,347 +1,340 @@
-// ============ НАСТРОЙКИ ============
-const ADMIN_ID = 8903772507;
+* { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; }
 
-// ============ ДАННЫЕ ============
-let userData = {
-    userId: null,
-    username: 'Гость',
-    firstName: '',
-    nickname: null,
-    balance: 1000,
-    gamesPlayed: 0,
-    wins: 0,
-    losses: 0,
-    daysPlayed: 1,
-    firstVisit: null,
-    lastVisit: null
-};
-
-// ============ SVG ИКОНКИ СЛОТОВ ============
-const slotSymbols = [
-    '<svg width="30" height="30" viewBox="0 0 24 24" fill="#ffd700"><path d="M6 3h12l4 6-10 12L2 9z"/></svg>',
-    '<svg width="30" height="30" viewBox="0 0 24 24" fill="#ffd700"><path d="M3 7l4 5 5-6 5 6 4-5-2 12H5z"/></svg>',
-    '<svg width="30" height="30" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2L15 9H22L16 14L19 21L12 16L5 21L8 14L2 9H9L12 2Z"/></svg>',
-    '<svg width="30" height="30" viewBox="0 0 24 24"><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="18" font-weight="900" fill="#ffd700" font-family="Arial">7</text></svg>',
-    '<svg width="30" height="30" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2a6 6 0 0 0-6 6v3a6 6 0 0 1-1 3.5L4 17h16l-1-2.5a6 6 0 0 1-1-3.5V8a6 6 0 0 0-6-6z"/></svg>',
-    '<svg width="30" height="30" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 21s-8-5.5-8-11a4 4 0 0 1 8-2.5A4 4 0 0 1 20 10c0 5.5-8 11-8 11z"/></svg>'
-];
-
-// ============ SVG КУБИКИ ============
-const diceFaces = [
-    '<svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="12" r="2" fill="#ffd700"/></svg>',
-    '<svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>',
-    '<svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="12" cy="12" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>',
-    '<svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="16" cy="8" r="1.5" fill="#ffd700"/><circle cx="8" cy="16" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>',
-    '<svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="16" cy="8" r="1.5" fill="#ffd700"/><circle cx="12" cy="12" r="1.5" fill="#ffd700"/><circle cx="8" cy="16" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>',
-    '<svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="16" cy="8" r="1.5" fill="#ffd700"/><circle cx="8" cy="12" r="1.5" fill="#ffd700"/><circle cx="16" cy="12" r="1.5" fill="#ffd700"/><circle cx="8" cy="16" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>'
-];
-
-// ============ ИНИЦИАЛИЗАЦИЯ ============
-function init() {
-    if (window.Telegram?.WebApp) {
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
-        const user = tg.initDataUnsafe?.user;
-        if (user) {
-            userData.userId = user.id;
-            userData.username = user.username || 'Гость';
-            userData.firstName = user.first_name || '';
-        }
-    }
-    loadUserData();
-    buildRoulette();
-    updateUI();
-    showGames();
+body {
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: -apple-system, sans-serif;
+    color: white;
+    overflow: hidden;
+    touch-action: manipulation;
 }
 
-// ============ СОХРАНЕНИЕ ============
-function getStorageKey() {
-    return 'clickapp_data_' + (userData.userId || 'guest');
+.header {
+    background: rgba(26,26,46,0.9);
+    padding: 15px 20px;
+    border-bottom: 2px solid #ffd700;
 }
 
-function saveUserData() {
-    userData.lastVisit = new Date().toISOString();
-    localStorage.setItem(getStorageKey(), JSON.stringify(userData));
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
-function loadUserData() {
-    const data = localStorage.getItem(getStorageKey());
-    if (data) {
-        try {
-            userData = { ...userData, ...JSON.parse(data) };
-            checkDays();
-        } catch (e) {}
-    } else {
-        userData.firstVisit = new Date().toISOString();
-        saveUserData();
-    }
+.logo {
+    font-size: 18px;
+    font-weight: 900;
+    color: #ffd700;
 }
 
-function checkDays() {
-    if (userData.firstVisit) {
-        const first = new Date(userData.firstVisit);
-        const now = new Date();
-        userData.daysPlayed = Math.floor((now - first) / (1000 * 60 * 60 * 24)) + 1;
-    }
+.balance-box {
+    background: rgba(255,215,0,0.15);
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 20px;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
 }
 
-// ============ UI ============
-function updateUI() {
-    document.getElementById('balance').textContent = userData.balance;
-    
-    const avatar = document.getElementById('profile-avatar');
-    const name = document.getElementById('profile-name');
-    
-    if (userData.userId && window.Telegram?.WebApp) {
-        const user = window.Telegram.WebApp.initDataUnsafe?.user;
-        if (user?.photo_url) {
-            avatar.innerHTML = '<img src="' + user.photo_url + '">';
-        } else if (userData.firstName) {
-            avatar.innerHTML = '<svg width="35" height="35" viewBox="0 0 24 24" fill="#1a1a2e"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
-        }
-    }
-    
-    name.textContent = userData.nickname || userData.firstName || 'Гость';
-    document.getElementById('profile-level').textContent = 'Уровень ' + (Math.floor(userData.gamesPlayed / 10) + 1);
-    document.getElementById('stat-balance').textContent = userData.balance;
-    document.getElementById('stat-games').textContent = userData.gamesPlayed;
-    document.getElementById('stat-wins').textContent = userData.wins;
-    document.getElementById('stat-losses').textContent = userData.losses;
-    document.getElementById('stat-days').textContent = userData.daysPlayed;
-    
-    // ПРОВЕРКА АДМИНА
-    if (userData.userId === ADMIN_ID) {
-        document.getElementById('admin-btn').classList.remove('hidden');
-    } else {
-        document.getElementById('admin-btn').classList.add('hidden');
-    }
+.balance {
+    font-size: 17px;
+    font-weight: 700;
+    color: #ffd700;
 }
 
-function addCoins(amount) {
-    userData.balance += amount;
-    saveUserData();
-    updateUI();
+.screen {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
 }
 
-function spendCoins(amount) {
-    if (userData.balance >= amount) {
-        userData.balance -= amount;
-        saveUserData();
-        updateUI();
-        return true;
-    }
-    return false;
+.hidden { display: none !important; }
+
+.screen-title {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 20px;
 }
 
-// ============ НАВИГАЦИЯ ============
-function hideAllScreens() {
-    ['games-screen', 'profile-screen', 'slots-screen', 'roulette-screen', 'dice-screen'].forEach(s => {
-        document.getElementById(s).classList.add('hidden');
-    });
+.menu-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 380px;
 }
 
-function showGames() {
-    hideAllScreens();
-    document.getElementById('games-screen').classList.remove('hidden');
-    document.getElementById('nav-games').classList.add('active');
-    document.getElementById('nav-profile').classList.remove('active');
+.menu-item {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 18px;
+    padding: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.2s;
 }
 
-function showProfile() {
-    hideAllScreens();
-    document.getElementById('profile-screen').classList.remove('hidden');
-    document.getElementById('nav-games').classList.remove('active');
-    document.getElementById('nav-profile').classList.add('active');
-    updateUI();
+.menu-item:active {
+    transform: scale(0.95);
+    border-color: #ffd700;
 }
 
-function showGame(game) {
-    hideAllScreens();
-    if (game === 'menu') {
-        document.getElementById('games-screen').classList.remove('hidden');
-    } else {
-        document.getElementById(game + '-screen').classList.remove('hidden');
-    }
-    document.getElementById('nav-games').classList.add('active');
-    document.getElementById('nav-profile').classList.remove('active');
+.menu-icon-box {
+    width: 48px;
+    height: 48px;
+    background: rgba(255,215,0,0.12);
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
 }
 
-// ============ СМЕНА НИКА ============
-function showChangeNick() {
-    document.getElementById('nick-modal').classList.remove('hidden');
-    document.getElementById('nick-input').value = userData.nickname || '';
+.menu-text { flex: 1; }
+.menu-title { font-size: 16px; font-weight: 700; }
+.menu-desc { font-size: 12px; color: #a0a0b0; margin-top: 3px; }
+.arrow { color: #ffd700; font-size: 20px; flex-shrink: 0; }
+
+.back-btn {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 9px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    font-size: 13px;
+    align-self: flex-start;
 }
 
-function closeChangeNick() {
-    document.getElementById('nick-modal').classList.add('hidden');
+.game-box {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 22px 16px;
+    width: 100%;
+    max-width: 340px;
+    text-align: center;
 }
 
-function changeNick() {
-    const nick = document.getElementById('nick-input').value.trim();
-    if (!nick) { showToast('Введи ник!', 'lose'); return; }
-    if (!spendCoins(50000)) { showToast('Нужно 50 000 монет!', 'lose'); return; }
-    userData.nickname = nick;
-    saveUserData();
-    updateUI();
-    closeChangeNick();
-    showToast('Ник изменён!', 'win');
+.game-title { font-size: 20px; font-weight: 800; margin-bottom: 12px; }
+
+.btn {
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    color: #1a1a2e;
+    border: none;
+    padding: 14px 25px;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    max-width: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
 }
 
-// ============ АДМИН ============
-function showAdminPanel() {
-    if (userData.userId !== ADMIN_ID) { showToast('Нет доступа!', 'lose'); return; }
-    document.getElementById('admin-modal').classList.remove('hidden');
-    document.getElementById('admin-my-id').textContent = userData.userId;
-    document.getElementById('admin-total-users').textContent = countUsers();
+.btn:active { transform: scale(0.95); }
+.btn:disabled { background: #555; color: #999; }
+.btn-cost { font-size: 12px; font-weight: 500; }
+
+.slots-row { display: flex; justify-content: center; gap: 10px; margin: 18px 0; }
+
+.slot {
+    width: 65px;
+    height: 65px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    border: 2px solid rgba(255,215,0,0.3);
+    color: #ffd700;
 }
 
-function closeAdminPanel() {
-    document.getElementById('admin-modal').classList.add('hidden');
+.slot.spinning { animation: shake 0.1s linear infinite; }
+@keyframes shake { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+
+.roulette-icon { font-size: 70px; margin: 15px 0; }
+
+.dice-box { display: flex; align-items: center; justify-content: center; margin: 18px 0; font-size: 70px; }
+.dice-box.rolling { animation: roll 0.1s linear infinite; }
+@keyframes roll { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+.bet-buttons { display: flex; gap: 8px; margin: 12px 0; flex-wrap: wrap; justify-content: center; }
+
+.bet-btn {
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: none;
+    font-size: 13px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: all 0.2s;
 }
 
-function countUsers() {
-    let count = 0;
-    for (let i = 0; i < localStorage.length; i++) {
-        if (localStorage.key(i).startsWith('clickapp_data_')) count++;
-    }
-    return count;
+.bet-btn:active { transform: scale(0.9); }
+.bet-red { background: #cc0000; color: white; }
+.bet-black { background: #222; color: white; }
+.bet-green { background: #006600; color: white; }
+.bet-low { background: #333; color: white; }
+.bet-high { background: #ffd700; color: #1a1a2e; }
+.bet-info { font-size: 12px; color: #a0a0b0; margin-top: 5px; }
+
+.result-message { font-size: 17px; margin: 10px; min-height: 25px; text-align: center; font-weight: 700; }
+.win { color: #00ff00; }
+.lose { color: #ff4444; }
+
+.profile-card {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 22px 16px;
+    width: 100%;
+    max-width: 340px;
+    text-align: center;
 }
 
-function adminGiveCoins() {
-    const id = document.getElementById('admin-user-id').value.trim();
-    const amount = parseInt(document.getElementById('admin-amount').value);
-    if (!id || !amount || amount <= 0) { showToast('Введи ID и сумму!', 'lose'); return; }
-    
-    const key = 'clickapp_data_' + id;
-    const data = localStorage.getItem(key);
-    if (data) {
-        const parsed = JSON.parse(data);
-        parsed.balance += amount;
-        localStorage.setItem(key, JSON.stringify(parsed));
-    } else {
-        localStorage.setItem(key, JSON.stringify({
-            userId: parseInt(id), balance: 1000 + amount,
-            gamesPlayed: 0, wins: 0, losses: 0,
-            daysPlayed: 1, firstVisit: new Date().toISOString()
-        }));
-    }
-    showToast('Выдано ' + amount + ' монет!', 'win');
+.profile-avatar {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd700, #ff8c00);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-size: 30px;
+    font-weight: 900;
+    color: #1a1a2e;
 }
 
-function adminRemoveCoins() {
-    const id = document.getElementById('admin-user-id').value.trim();
-    const amount = parseInt(document.getElementById('admin-amount').value);
-    if (!id || !amount || amount <= 0) { showToast('Введи ID и сумму!', 'lose'); return; }
-    
-    const key = 'clickapp_data_' + id;
-    const data = localStorage.getItem(key);
-    if (data) {
-        const parsed = JSON.parse(data);
-        parsed.balance = Math.max(0, parsed.balance - amount);
-        localStorage.setItem(key, JSON.stringify(parsed));
-        showToast('Забрано ' + amount + ' монет!', 'info');
-    } else {
-        showToast('Пользователь не найден!', 'lose');
-    }
+.profile-name { font-size: 19px; font-weight: 800; margin-bottom: 5px; }
+.profile-id { font-size: 12px; color: #999; margin-bottom: 15px; }
+.profile-stats { width: 100%; }
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    margin-bottom: 6px;
 }
 
-// ============ СЛОТЫ ============
-let isSpinning = false;
+.stat-label { color: #a0a0b0; font-size: 12px; }
+.stat-value { font-weight: 700; color: #ffd700; font-size: 13px; }
+.stat-win { color: #00ff00 !important; }
+.stat-lose { color: #ff4444 !important; }
 
-function spin() {
-    if (isSpinning) return;
-    if (!spendCoins(100)) { showToast('Недостаточно монет!', 'lose'); return; }
-    
-    isSpinning = true;
-    userData.gamesPlayed++;
-    
-    const btn = document.getElementById('spin-btn');
-    btn.disabled = true;
-    btn.innerHTML = '<span>Крутим...</span>';
-    
-    const slots = [1, 2, 3].map(i => document.getElementById('slot' + i));
-    slots.forEach(s => s.classList.add('spinning'));
-    
-    const interval = setInterval(() => {
-        slots.forEach(s => {
-            s.innerHTML = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
-        });
-    }, 80);
-    
-    setTimeout(() => {
-        clearInterval(interval);
-        slots.forEach(s => s.classList.remove('spinning'));
-        
-        const result = slots.map(s => s.innerHTML);
-        
-        if (result[0] === result[1] && result[1] === result[2]) {
-            addCoins(500);
-            userData.wins++;
-            showResult('slot-result', 'ДЖЕКПОТ! +500!', 'win');
-            showToast('ДЖЕКПОТ! +500!', 'win');
-        } else if (result[0] === result[1] || result[1] === result[2] || result[0] === result[2]) {
-            addCoins(150);
-            userData.wins++;
-            showResult('slot-result', 'Две одинаковые! +150', 'win');
-        } else {
-            userData.losses++;
-            showResult('slot-result', 'Попробуй ещё раз', 'lose');
-        }
-        
-        saveUserData();
-        isSpinning = false;
-        btn.disabled = false;
-        btn.innerHTML = '<span>Крутить</span><span class="btn-cost">100 монет</span>';
-    }, 2000);
+.admin-btn {
+    background: linear-gradient(135deg, #ff4444, #cc0000);
+    color: white;
+    padding: 11px 16px;
+    border-radius: 11px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    margin: 12px auto 0;
+    display: block;
 }
 
-// ============ КОСТИ ============
-function betDice(choice) {
-    if (!spendCoins(100)) { showToast('Недостаточно монет!', 'lose'); return; }
-    
-    userData.gamesPlayed++;
-    const dice = document.getElementById('dice-result');
-    dice.classList.add('rolling');
-    
-    const interval = setInterval(() => {
-        dice.innerHTML = diceFaces[Math.floor(Math.random() * 6)];
-    }, 100);
-    
-    setTimeout(() => {
-        clearInterval(interval);
-        dice.classList.remove('rolling');
-        
-        const result = Math.floor(Math.random() * 6);
-        dice.innerHTML = diceFaces[result];
-        
-        const isLow = result <= 2;
-        if ((choice === 'low' && isLow) || (choice === 'high' && !isLow)) {
-            addCoins(200);
-            userData.wins++;
-            showResult('dice-message', 'Выпало ' + (result + 1) + '! +200!', 'win');
-        } else {
-            userData.losses++;
-            showResult('dice-message', 'Выпало ' + (result + 1) + '. Мимо!', 'lose');
-        }
-        saveUserData();
-    }, 1500);
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
 }
 
-// ============ РЕЗУЛЬТАТ ============
-function showResult(elementId, message, type) {
-    const el = document.getElementById(elementId);
-    el.textContent = message;
-    el.className = 'result-message ' + type;
+.modal {
+    background: #2a2a4a;
+    border-radius: 18px;
+    padding: 22px 18px;
+    width: 90%;
+    max-width: 310px;
+    text-align: center;
 }
 
-// ============ ТОСТ ============
-function showToast(message, type) {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
-    toast.className = 'toast ' + type + ' show';
-    setTimeout(() => toast.classList.remove('show'), 2000);
+.modal-title { font-size: 17px; font-weight: 800; margin-bottom: 12px; }
+
+.text-input {
+    width: 100%;
+    padding: 11px;
+    border-radius: 9px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(0,0,0,0.3);
+    color: white;
+    font-size: 14px;
+    text-align: center;
+    outline: none;
+    margin-bottom: 8px;
 }
 
-// ============ ЗАПУСК ============
-init();
+.admin-give-btn { width: 100%; padding: 10px; border-radius: 9px; border: none; background: #00aa00; color: white; font-weight: 700; cursor: pointer; margin-bottom: 8px; }
+.admin-take-btn { width: 100%; padding: 10px; border-radius: 9px; border: none; background: #cc0000; color: white; font-weight: 700; cursor: pointer; margin-bottom: 8px; }
+.admin-close-btn { width: 100%; padding: 10px; border-radius: 9px; border: none; background: #333; color: white; font-weight: 700; cursor: pointer; }
+
+.bottom-nav {
+    display: flex;
+    background: rgba(26,26,46,0.9);
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.bottom-nav button {
+    flex: 1;
+    background: none;
+    border: none;
+    color: #a0a0b0;
+    padding: 11px 5px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 12px;
+}
+
+.bottom-nav button.active { color: #ffd700; }
+.nav-icon { font-size: 20px; }
+
+.toast {
+    position: fixed;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 16px;
+    border-radius: 9px;
+    font-weight: 700;
+    font-size: 12px;
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s;
+}
+
+.toast.show { opacity: 1; }
+.toast.win { background: #00aa00; color: white; }
+.toast.lose { background: #ff4444; color: white; }
+.toast.info { background: #ffd700; color: #1a1a2e; }
