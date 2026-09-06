@@ -11,16 +11,16 @@ body {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: -apple-system, sans-serif;
     color: white;
     overflow: hidden;
     touch-action: manipulation;
 }
 
 .header {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(26, 26, 46, 0.9);
     padding: 15px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid #ffd700;
 }
 
 .header-top {
@@ -50,10 +50,6 @@ body {
     gap: 7px;
 }
 
-.balance-icon {
-    color: #ffd700;
-}
-
 .balance {
     font-size: 17px;
     font-weight: 700;
@@ -66,19 +62,11 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 15px;
     overflow-y: auto;
-    animation: fadeIn 0.3s ease;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.hidden {
-    display: none !important;
-}
+.hidden { display: none !important; }
 
 .screen-title {
     font-size: 22px;
@@ -91,18 +79,18 @@ body {
     flex-direction: column;
     gap: 12px;
     width: 100%;
-    max-width: 400px;
+    max-width: 380px;
 }
 
 .menu-item {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 18px;
-    padding: 18px;
+    padding: 16px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 12px;
     transition: all 0.2s;
 }
 
@@ -111,53 +99,34 @@ body {
     border-color: #ffd700;
 }
 
-.menu-icon-wrapper {
-    width: 50px;
-    height: 50px;
-    background: rgba(255, 215, 0, 0.15);
-    border-radius: 14px;
+.menu-icon-box {
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 215, 0, 0.12);
+    border-radius: 13px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
 }
 
-.menu-icon {
-    width: 28px;
-    height: 28px;
-    color: #ffd700;
-}
-
-.menu-text {
-    flex: 1;
-}
-
-.menu-title {
-    font-size: 16px;
-    font-weight: 700;
-}
-
-.menu-desc {
-    font-size: 12px;
-    color: #a0a0b0;
-    margin-top: 3px;
-}
-
-.arrow {
-    color: #ffd700;
-    flex-shrink: 0;
-}
+.menu-text { flex: 1; }
+.menu-title { font-size: 16px; font-weight: 700; }
+.menu-desc { font-size: 12px; color: #a0a0b0; margin-top: 3px; }
 
 .back-btn {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
-    padding: 9px 14px;
+    padding: 8px 14px;
     border-radius: 10px;
     cursor: pointer;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     font-size: 13px;
     align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .btn {
@@ -166,7 +135,7 @@ body {
     border: none;
     padding: 14px 25px;
     border-radius: 14px;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 700;
     cursor: pointer;
     width: 100%;
@@ -179,87 +148,82 @@ body {
 
 .btn:active { transform: scale(0.95); }
 .btn:disabled { background: #555; color: #999; }
-.btn-cost { font-size: 12px; font-weight: 500; }
+.btn-cost { font-size: 12px; }
 
-.slot-machine {
+.game-box {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 22px;
-    padding: 25px 18px;
+    border-radius: 20px;
+    padding: 22px 16px;
     width: 100%;
-    max-width: 360px;
+    max-width: 340px;
     text-align: center;
 }
 
 .game-title {
     font-size: 20px;
     font-weight: 800;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .slots-row {
     display: flex;
     justify-content: center;
     gap: 10px;
-    margin: 20px 0;
+    margin: 18px 0;
 }
 
 .slot {
-    width: 70px;
-    height: 70px;
+    width: 65px;
+    height: 65px;
     background: rgba(0, 0, 0, 0.4);
-    border-radius: 14px;
+    border-radius: 13px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 30px;
+    font-size: 28px;
     border: 2px solid rgba(255, 215, 0, 0.3);
     color: #ffd700;
 }
 
-.slot.spinning {
-    animation: slotSpin 0.1s linear infinite;
-}
-
-@keyframes slotSpin {
-    0% { transform: translateY(-3px); }
-    50% { transform: translateY(3px); }
-    100% { transform: translateY(-3px); }
+.slot.spinning { animation: shake 0.1s linear infinite; }
+@keyframes shake {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
 }
 
 /* РУЛЕТКА */
-.roulette-container {
-    margin: 15px auto;
+.roulette-wrap {
+    margin: 10px auto;
 }
 
 .roulette-svg {
-    width: 220px;
-    height: 220px;
+    width: 210px;
+    height: 210px;
 }
 
 #roulette-rotor {
-    transition: transform 3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: transform 2.5s cubic-bezier(0.15, 0.8, 0.15, 1);
     transform-origin: 120px 120px;
     will-change: transform;
 }
 
-.dice-container {
-    margin: 20px 0;
+/* КОСТИ */
+.dice-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 18px 0;
+    color: #ffd700;
 }
 
-.dice {
-    font-size: 80px;
-}
-
-.dice.rolling {
-    animation: diceRoll 0.1s linear infinite;
-}
-
-@keyframes diceRoll {
+.dice-box.rolling { animation: roll 0.1s linear infinite; }
+@keyframes roll {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
 
+/* СТАВКИ */
 .bet-buttons {
     display: flex;
     gap: 8px;
@@ -269,31 +233,32 @@ body {
 }
 
 .bet-btn {
-    padding: 11px 18px;
-    border-radius: 11px;
+    padding: 10px 16px;
+    border-radius: 10px;
     border: none;
-    font-size: 14px;
+    font-size: 13px;
     cursor: pointer;
     font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s;
 }
 
 .bet-btn:active { transform: scale(0.9); }
 .bet-red { background: #cc0000; color: white; }
-.bet-black { background: #333; color: white; }
+.bet-black { background: #222; color: white; }
 .bet-green { background: #006600; color: white; }
 .bet-low { background: #333; color: white; }
 .bet-high { background: #ffd700; color: #1a1a2e; }
 
-.bet-info {
-    font-size: 13px;
-    color: #a0a0b0;
-    margin-top: 4px;
-}
+.bet-info { font-size: 12px; color: #a0a0b0; margin-top: 5px; }
 
+/* РЕЗУЛЬТАТ */
 .result-message {
-    font-size: 18px;
-    margin: 12px;
-    min-height: 28px;
+    font-size: 17px;
+    margin: 10px;
+    min-height: 25px;
     text-align: center;
     font-weight: 700;
 }
@@ -301,108 +266,82 @@ body {
 .win { color: #00ff00; }
 .lose { color: #ff4444; }
 
+/* ПРОФИЛЬ */
 .profile-card {
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 22px;
-    padding: 25px 18px;
+    border-radius: 20px;
+    padding: 22px 16px;
     width: 100%;
-    max-width: 360px;
+    max-width: 340px;
     text-align: center;
 }
 
 .profile-avatar {
-    width: 80px;
-    height: 80px;
+    width: 75px;
+    height: 75px;
     border-radius: 50%;
     background: linear-gradient(135deg, #ffd700, #ff8c00);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 12px;
-    font-size: 40px;
+    margin: 0 auto 10px;
     overflow: hidden;
-    color: #1a1a2e;
 }
 
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-.profile-name {
-    font-size: 20px;
-    font-weight: 800;
-    margin-bottom: 8px;
-}
+.profile-name { font-size: 19px; font-weight: 800; margin-bottom: 6px; }
 
 .change-nick-btn {
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #ffd700;
-    padding: 8px 14px;
-    border-radius: 10px;
+    padding: 7px 12px;
+    border-radius: 9px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 5px;
-    margin: 0 auto 15px;
+    margin: 0 auto 12px;
 }
 
-.profile-level {
-    color: #ffd700;
-    font-size: 13px;
-    margin-bottom: 20px;
-}
+.profile-level { color: #ffd700; font-size: 12px; margin-bottom: 15px; }
 
-.profile-stats {
-    width: 100%;
-}
-
+.profile-stats { width: 100%; }
 .stat-row {
     display: flex;
     justify-content: space-between;
-    padding: 12px 14px;
+    padding: 10px 12px;
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 11px;
-    margin-bottom: 7px;
+    border-radius: 10px;
+    margin-bottom: 6px;
 }
-
-.stat-label {
-    color: #a0a0b0;
-    font-size: 13px;
-}
-
-.stat-value {
-    font-weight: 700;
-    color: #ffd700;
-    font-size: 14px;
-}
-
+.stat-label { color: #a0a0b0; font-size: 12px; }
+.stat-value { font-weight: 700; color: #ffd700; font-size: 13px; }
 .stat-win { color: #00ff00 !important; }
 .stat-lose { color: #ff4444 !important; }
 
+/* АДМИН КНОПКА */
 .admin-btn {
     background: linear-gradient(135deg, #ff4444, #cc0000);
     color: white;
-    padding: 12px 18px;
-    border-radius: 12px;
+    padding: 11px 16px;
+    border-radius: 11px;
     border: none;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     display: flex;
     align-items: center;
-    gap: 7px;
-    margin: 15px auto 0;
-    width: 100%;
-    max-width: 250px;
+    gap: 6px;
+    margin: 12px auto 0;
     justify-content: center;
 }
 
+/* МОДАЛКИ */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -418,91 +357,57 @@ body {
 
 .modal {
     background: #2a2a4a;
-    border-radius: 20px;
-    padding: 25px 20px;
+    border-radius: 18px;
+    padding: 22px 18px;
     width: 90%;
-    max-width: 330px;
+    max-width: 310px;
     text-align: center;
 }
 
-.modal-title {
-    font-size: 18px;
-    font-weight: 800;
-    margin-bottom: 8px;
-}
+.modal-title { font-size: 17px; font-weight: 800; margin-bottom: 8px; }
+.modal-desc { font-size: 12px; color: #a0a0b0; margin-bottom: 12px; }
 
-.modal-desc {
-    font-size: 13px;
-    color: #a0a0b0;
-    margin-bottom: 15px;
-}
-
-.nick-input, .admin-input {
+.text-input {
     width: 100%;
-    padding: 12px;
-    border-radius: 10px;
+    padding: 11px;
+    border-radius: 9px;
     border: 1px solid rgba(255, 255, 255, 0.3);
     background: rgba(0, 0, 0, 0.3);
     color: white;
-    font-size: 15px;
+    font-size: 14px;
     text-align: center;
     outline: none;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
-.modal-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-}
-
+.modal-buttons { display: flex; gap: 8px; margin-top: 12px; }
 .modal-btn {
     flex: 1;
-    padding: 11px;
-    border-radius: 10px;
+    padding: 10px;
+    border-radius: 9px;
     border: none;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     cursor: pointer;
 }
+.cancel-btn { background: rgba(255, 255, 255, 0.1); color: white; width: 100%; margin-top: 8px; }
+.confirm-btn { background: #ffd700; color: #1a1a2e; }
 
-.cancel-btn {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    width: 100%;
-    margin-top: 10px;
-}
-
-.confirm-btn {
-    background: #ffd700;
-    color: #1a1a2e;
-}
-
-.admin-actions {
-    margin: 10px 0;
-}
-
-.admin-buttons {
-    display: flex;
-    gap: 8px;
-    margin: 10px 0;
-}
-
-.admin-btn-add {
+.admin-buttons { display: flex; gap: 8px; margin: 8px 0; }
+.admin-give-btn {
     flex: 1;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 9px;
     border: none;
     background: #00aa00;
     color: white;
     font-weight: 700;
     cursor: pointer;
 }
-
-.admin-btn-remove {
+.admin-take-btn {
     flex: 1;
     padding: 10px;
-    border-radius: 10px;
+    border-radius: 9px;
     border: none;
     background: #cc0000;
     color: white;
@@ -512,14 +417,15 @@ body {
 
 .admin-info {
     background: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    padding: 12px;
-    margin-top: 10px;
-    font-size: 12px;
+    border-radius: 9px;
+    padding: 10px;
+    margin-top: 8px;
+    font-size: 11px;
     color: #a0a0b0;
-    line-height: 1.8;
+    line-height: 1.7;
 }
 
+/* НИЖНЯЯ НАВИГАЦИЯ */
 .bottom-nav {
     display: flex;
     background: rgba(26, 26, 46, 0.9);
@@ -531,7 +437,7 @@ body {
     background: none;
     border: none;
     color: #a0a0b0;
-    padding: 11px 5px;
+    padding: 10px 5px;
     cursor: pointer;
     display: flex;
     flex-direction: column;
@@ -539,35 +445,24 @@ body {
     gap: 2px;
 }
 
-.bottom-nav button.active {
-    color: #ffd700;
-}
+.bottom-nav button.active { color: #ffd700; }
+.nav-text { font-size: 10px; font-weight: 600; }
 
-.nav-icon {
-    width: 21px;
-    height: 21px;
-}
-
-.nav-text {
-    font-size: 10px;
-    font-weight: 600;
-}
-
+/* ТОСТ */
 .toast {
     position: fixed;
-    top: 20px;
+    top: 15px;
     left: 50%;
     transform: translateX(-50%);
-    padding: 11px 18px;
-    border-radius: 10px;
+    padding: 10px 16px;
+    border-radius: 9px;
     font-weight: 700;
-    font-size: 13px;
+    font-size: 12px;
     z-index: 100;
     opacity: 0;
     pointer-events: none;
     transition: all 0.3s;
 }
-
 .toast.show { opacity: 1; }
 .toast.win { background: #00aa00; color: white; }
 .toast.lose { background: #ff4444; color: white; }
