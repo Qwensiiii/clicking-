@@ -1,42 +1,24 @@
-// ============ РУЛЕТКА С SVG ЯЧЕЙКАМИ (ОПТИМИЗИРОВАННАЯ) ============
+// ============ ДАННЫЕ РУЛЕТКИ ============
 const rouletteNumbers = [
     { num: 0, color: 'zero' },
-    { num: 32, color: 'red' },
-    { num: 15, color: 'black' },
-    { num: 19, color: 'red' },
-    { num: 4, color: 'black' },
-    { num: 21, color: 'red' },
-    { num: 2, color: 'black' },
-    { num: 25, color: 'red' },
-    { num: 17, color: 'black' },
-    { num: 34, color: 'red' },
-    { num: 6, color: 'black' },
-    { num: 27, color: 'red' },
-    { num: 13, color: 'black' },
-    { num: 36, color: 'red' },
-    { num: 11, color: 'black' },
-    { num: 30, color: 'red' },
-    { num: 8, color: 'black' },
-    { num: 23, color: 'red' },
-    { num: 10, color: 'black' },
-    { num: 5, color: 'red' },
-    { num: 24, color: 'black' },
-    { num: 16, color: 'red' },
-    { num: 33, color: 'black' },
-    { num: 1, color: 'red' },
-    { num: 20, color: 'black' },
-    { num: 14, color: 'red' },
-    { num: 31, color: 'black' },
-    { num: 9, color: 'red' },
-    { num: 22, color: 'black' },
-    { num: 18, color: 'red' },
-    { num: 29, color: 'black' },
-    { num: 7, color: 'red' },
-    { num: 28, color: 'black' },
-    { num: 12, color: 'red' },
-    { num: 35, color: 'black' },
-    { num: 3, color: 'red' },
-    { num: 26, color: 'black' }
+    { num: 32, color: 'red' }, { num: 15, color: 'black' },
+    { num: 19, color: 'red' }, { num: 4, color: 'black' },
+    { num: 21, color: 'red' }, { num: 2, color: 'black' },
+    { num: 25, color: 'red' }, { num: 17, color: 'black' },
+    { num: 34, color: 'red' }, { num: 6, color: 'black' },
+    { num: 27, color: 'red' }, { num: 13, color: 'black' },
+    { num: 36, color: 'red' }, { num: 11, color: 'black' },
+    { num: 30, color: 'red' }, { num: 8, color: 'black' },
+    { num: 23, color: 'red' }, { num: 10, color: 'black' },
+    { num: 5, color: 'red' }, { num: 24, color: 'black' },
+    { num: 16, color: 'red' }, { num: 33, color: 'black' },
+    { num: 1, color: 'red' }, { num: 20, color: 'black' },
+    { num: 14, color: 'red' }, { num: 31, color: 'black' },
+    { num: 9, color: 'red' }, { num: 22, color: 'black' },
+    { num: 18, color: 'red' }, { num: 29, color: 'black' },
+    { num: 7, color: 'red' }, { num: 28, color: 'black' },
+    { num: 12, color: 'red' }, { num: 35, color: 'black' },
+    { num: 3, color: 'red' }, { num: 26, color: 'black' }
 ];
 
 let isRouletteSpinning = false;
@@ -46,48 +28,49 @@ let currentRotation = 0;
 function buildRoulette() {
     const cellsGroup = document.getElementById('roulette-cells');
     if (!cellsGroup) return;
-    cellsGroup.innerHTML = '';
     
     const NS = 'http://www.w3.org/2000/svg';
-    const centerX = 120;
-    const centerY = 120;
-    const outerRadius = 105;
-    const innerRadius = 38;
-    const angleStep = 360 / rouletteNumbers.length;
+    const cx = 120, cy = 120;
+    const rOuter = 105, rInner = 38;
+    const step = 360 / rouletteNumbers.length;
     
-    rouletteNumbers.forEach((item, index) => {
-        const startAngle = index * angleStep - 90;
-        const endAngle = (index + 1) * angleStep - 90;
+    cellsGroup.innerHTML = '';
+    
+    rouletteNumbers.forEach((item, i) => {
+        const a1 = i * step - 90;
+        const a2 = (i + 1) * step - 90;
         
-        const x1 = centerX + innerRadius * Math.cos(startAngle * Math.PI / 180);
-        const y1 = centerY + innerRadius * Math.sin(startAngle * Math.PI / 180);
-        const x2 = centerX + outerRadius * Math.cos(startAngle * Math.PI / 180);
-        const y2 = centerY + outerRadius * Math.sin(startAngle * Math.PI / 180);
-        const x3 = centerX + outerRadius * Math.cos(endAngle * Math.PI / 180);
-        const y3 = centerY + outerRadius * Math.sin(endAngle * Math.PI / 180);
-        const x4 = centerX + innerRadius * Math.cos(endAngle * Math.PI / 180);
-        const y4 = centerY + innerRadius * Math.sin(endAngle * Math.PI / 180);
+        const rad1 = a1 * Math.PI / 180;
+        const rad2 = a2 * Math.PI / 180;
+        
+        const x1 = cx + rInner * Math.cos(rad1);
+        const y1 = cy + rInner * Math.sin(rad1);
+        const x2 = cx + rOuter * Math.cos(rad1);
+        const y2 = cy + rOuter * Math.sin(rad1);
+        const x3 = cx + rOuter * Math.cos(rad2);
+        const y3 = cy + rOuter * Math.sin(rad2);
+        const x4 = cx + rInner * Math.cos(rad2);
+        const y4 = cy + rInner * Math.sin(rad2);
         
         const path = document.createElementNS(NS, 'path');
-        path.setAttribute('d', 'M ' + x1 + ' ' + y1 + ' L ' + x2 + ' ' + y2 + ' L ' + x3 + ' ' + y3 + ' L ' + x4 + ' ' + y4 + ' Z');
+        path.setAttribute('d', 'M' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2 + ' L' + x3 + ' ' + y3 + ' L' + x4 + ' ' + y4 + ' Z');
         
-        let fillColor;
-        if (item.color === 'zero') fillColor = '#006600';
-        else if (item.color === 'red') fillColor = '#cc0000';
-        else fillColor = '#1a1a1a';
+        let fill;
+        if (item.color === 'zero') fill = '#006600';
+        else if (item.color === 'red') fill = '#cc0000';
+        else fill = '#1a1a1a';
         
-        path.setAttribute('fill', fillColor);
+        path.setAttribute('fill', fill);
         path.setAttribute('stroke', '#ffd700');
         path.setAttribute('stroke-width', '0.5');
-        
         cellsGroup.appendChild(path);
         
         // Цифры
         if (item.num !== 0) {
-            const textAngle = ((startAngle + endAngle) / 2) * Math.PI / 180;
-            const textRadius = (innerRadius + outerRadius) / 2;
-            const tx = centerX + textRadius * Math.cos(textAngle);
-            const ty = centerY + textRadius * Math.sin(textAngle);
+            const midAngle = ((a1 + a2) / 2) * Math.PI / 180;
+            const rText = (rInner + rOuter) / 2;
+            const tx = cx + rText * Math.cos(midAngle);
+            const ty = cy + rText * Math.sin(midAngle);
             
             const text = document.createElementNS(NS, 'text');
             text.setAttribute('x', tx);
@@ -98,7 +81,6 @@ function buildRoulette() {
             text.setAttribute('font-size', '7');
             text.setAttribute('font-weight', 'bold');
             text.textContent = item.num;
-            
             cellsGroup.appendChild(text);
         }
     });
@@ -111,20 +93,18 @@ function betRoulette(color) {
     
     isRouletteSpinning = true;
     userData.gamesPlayed++;
+    saveUserData();
     
     const rotor = document.getElementById('roulette-rotor');
     const resultIndex = Math.floor(Math.random() * rouletteNumbers.length);
     const result = rouletteNumbers[resultIndex];
     
-    // Расчёт угла поворота
     const anglePerCell = 360 / rouletteNumbers.length;
     const targetAngle = resultIndex * anglePerCell;
-    const extraSpins = 3;
-    const newRotation = currentRotation + extraSpins * 360 + (360 - targetAngle) + 90;
-    
+    const fullSpins = 4;
+    const newRotation = currentRotation + fullSpins * 360 + (360 - targetAngle) + 90;
     currentRotation = newRotation;
     
-    // Применяем transform к rotor (не перерисовываем SVG)
     rotor.style.transform = 'rotate(' + newRotation + 'deg)';
     
     setTimeout(() => {
@@ -154,5 +134,5 @@ function betRoulette(color) {
         
         saveUserData();
         isRouletteSpinning = false;
-    }, 3000);
+    }, 2500);
 }
