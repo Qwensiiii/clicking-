@@ -1,5 +1,5 @@
 let userData = { userId: null, balance: 1000, gamesPlayed: 0, wins: 0, losses: 0 };
-const ADMIN_ID = 8903772507;
+const ADMIN_ID = 178871457656051;
 
 const slotSymbols = [
     '<svg viewBox="0 0 24 24" fill="#ffd700" width="28" height="28"><path d="M6 3h12l4 6-10 12L2 9z"/></svg>',
