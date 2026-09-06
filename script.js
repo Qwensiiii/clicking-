@@ -33,8 +33,10 @@ function init() {
         }
     }
     loadUserData();
+    buildRoulette();
     updateUI();
     showGames();
+    console.log('User ID:', userData.userId, 'Admin ID:', ADMIN_ID);
 }
 
 // ============ СОХРАНЕНИЕ ============
@@ -92,8 +94,13 @@ function updateUI() {
     document.getElementById('stat-losses').textContent = userData.losses;
     document.getElementById('stat-days').textContent = userData.daysPlayed;
     
+    // АДМИН КНОПКА — проверяем ID
     if (userData.userId === ADMIN_ID) {
         document.getElementById('admin-btn').classList.remove('hidden');
+        console.log('Админ-кнопка показана');
+    } else {
+        document.getElementById('admin-btn').classList.add('hidden');
+        console.log('Не админ. User ID:', userData.userId);
     }
 }
 
@@ -169,7 +176,10 @@ function changeNick() {
 
 // ============ АДМИН ============
 function showAdminPanel() {
-    if (userData.userId !== ADMIN_ID) return;
+    if (userData.userId !== ADMIN_ID) {
+        showToast('Нет доступа!', 'lose');
+        return;
+    }
     document.getElementById('admin-modal').classList.remove('hidden');
     document.getElementById('admin-my-id').textContent = userData.userId;
     document.getElementById('admin-total-users').textContent = countUsers();
@@ -272,64 +282,6 @@ function spin() {
         isSpinning = false;
         btn.disabled = false;
         btn.innerHTML = '<span>Крутить</span><span class="btn-cost">100 монет</span>';
-    }, 2000);
-}
-
-// ============ РУЛЕТКА (ОПТИМИЗИРОВАННАЯ) ============
-let isRouletteSpinning = false;
-
-function betRoulette(color) {
-    if (isRouletteSpinning) return;
-    if (!spendCoins(100)) { showToast('Недостаточно монет!', 'lose'); return; }
-    
-    isRouletteSpinning = true;
-    userData.gamesPlayed++;
-    
-    const wheel = document.getElementById('wheel');
-    const result = Math.random();
-    
-    let resultColor;
-    if (result < 0.03) resultColor = 'zero';
-    else if (result < 0.5) resultColor = 'red';
-    else resultColor = 'black';
-    
-    // Простое вращение без сложных анимаций
-    wheel.style.transition = 'none';
-    wheel.style.transform = 'rotate(0deg)';
-    
-    setTimeout(() => {
-        wheel.style.transition = 'transform 2s cubic-bezier(0.2, 0.8, 0.2, 1)';
-        const rotation = 720 + Math.floor(Math.random() * 360);
-        wheel.style.transform = 'rotate(' + rotation + 'deg)';
-    }, 50);
-    
-    setTimeout(() => {
-        let win = false;
-        let amount = 0;
-        
-        if (color === 'zero' && resultColor === 'zero') {
-            win = true;
-            amount = 1400;
-        } else if (color === 'red' && resultColor === 'red') {
-            win = true;
-            amount = 200;
-        } else if (color === 'black' && resultColor === 'black') {
-            win = true;
-            amount = 200;
-        }
-        
-        if (win) {
-            addCoins(amount);
-            userData.wins++;
-            showResult('roulette-result', 'Выпало ' + resultColor + '! +' + amount + '!', 'win');
-            showToast('+' + amount + ' монет!', 'win');
-        } else {
-            userData.losses++;
-            showResult('roulette-result', 'Выпало ' + resultColor + '. Мимо!', 'lose');
-        }
-        
-        saveUserData();
-        isRouletteSpinning = false;
     }, 2000);
 }
 
