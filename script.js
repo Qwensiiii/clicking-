@@ -16,8 +16,25 @@ let userData = {
     lastVisit: null
 };
 
-const slotSymbols = ['🍒', '🍋', '💎', '7️⃣', '⭐', '🔔'];
-const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+// ============ SVG ИКОНКИ СЛОТОВ ============
+const slotSymbols = [
+    '<svg width="30" height="30" viewBox="0 0 24 24" fill="#ffd700"><path d="M6 3h12l4 6-10 12L2 9z"/></svg>',
+    '<svg width="30" height="30" viewBox="0 0 24 24" fill="#ffd700"><path d="M3 7l4 5 5-6 5 6 4-5-2 12H5z"/></svg>',
+    '<svg width="30" height="30" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2L15 9H22L16 14L19 21L12 16L5 21L8 14L2 9H9L12 2Z"/></svg>',
+    '<svg width="30" height="30" viewBox="0 0 24 24"><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="18" font-weight="900" fill="#ffd700" font-family="Arial">7</text></svg>',
+    '<svg width="30" height="30" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 2a6 6 0 0 0-6 6v3a6 6 0 0 1-1 3.5L4 17h16l-1-2.5a6 6 0 0 1-1-3.5V8a6 6 0 0 0-6-6z"/></svg>',
+    '<svg width="30" height="30" viewBox="0 0 24 24" fill="#ffd700"><path d="M12 21s-8-5.5-8-11a4 4 0 0 1 8-2.5A4 4 0 0 1 20 10c0 5.5-8 11-8 11z"/></svg>'
+];
+
+// ============ SVG КУБИКИ ============
+const diceFaces = [
+    '<svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="12" r="2" fill="#ffd700"/></svg>',
+    '<svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>',
+    '<svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="12" cy="12" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>',
+    '<svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="16" cy="8" r="1.5" fill="#ffd700"/><circle cx="8" cy="16" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>',
+    '<svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="16" cy="8" r="1.5" fill="#ffd700"/><circle cx="12" cy="12" r="1.5" fill="#ffd700"/><circle cx="8" cy="16" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>',
+    '<svg width="70" height="70" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="16" cy="8" r="1.5" fill="#ffd700"/><circle cx="8" cy="12" r="1.5" fill="#ffd700"/><circle cx="16" cy="12" r="1.5" fill="#ffd700"/><circle cx="8" cy="16" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>'
+];
 
 // ============ ИНИЦИАЛИЗАЦИЯ ============
 function init() {
@@ -36,7 +53,6 @@ function init() {
     buildRoulette();
     updateUI();
     showGames();
-    console.log('User ID:', userData.userId, 'Admin ID:', ADMIN_ID);
 }
 
 // ============ СОХРАНЕНИЕ ============
@@ -82,7 +98,7 @@ function updateUI() {
         if (user?.photo_url) {
             avatar.innerHTML = '<img src="' + user.photo_url + '">';
         } else if (userData.firstName) {
-            avatar.textContent = userData.firstName[0].toUpperCase();
+            avatar.innerHTML = '<svg width="35" height="35" viewBox="0 0 24 24" fill="#1a1a2e"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>';
         }
     }
     
@@ -94,13 +110,11 @@ function updateUI() {
     document.getElementById('stat-losses').textContent = userData.losses;
     document.getElementById('stat-days').textContent = userData.daysPlayed;
     
-    // АДМИН КНОПКА — проверяем ID
+    // ПРОВЕРКА АДМИНА
     if (userData.userId === ADMIN_ID) {
         document.getElementById('admin-btn').classList.remove('hidden');
-        console.log('Админ-кнопка показана');
     } else {
         document.getElementById('admin-btn').classList.add('hidden');
-        console.log('Не админ. User ID:', userData.userId);
     }
 }
 
@@ -176,10 +190,7 @@ function changeNick() {
 
 // ============ АДМИН ============
 function showAdminPanel() {
-    if (userData.userId !== ADMIN_ID) {
-        showToast('Нет доступа!', 'lose');
-        return;
-    }
+    if (userData.userId !== ADMIN_ID) { showToast('Нет доступа!', 'lose'); return; }
     document.getElementById('admin-modal').classList.remove('hidden');
     document.getElementById('admin-my-id').textContent = userData.userId;
     document.getElementById('admin-total-users').textContent = countUsers();
@@ -210,12 +221,12 @@ function adminGiveCoins() {
         localStorage.setItem(key, JSON.stringify(parsed));
     } else {
         localStorage.setItem(key, JSON.stringify({
-            userId: parseInt(id), balance: 1000 + amount, gamesPlayed: 0,
-            wins: 0, losses: 0, daysPlayed: 1, firstVisit: new Date().toISOString()
+            userId: parseInt(id), balance: 1000 + amount,
+            gamesPlayed: 0, wins: 0, losses: 0,
+            daysPlayed: 1, firstVisit: new Date().toISOString()
         }));
     }
     showToast('Выдано ' + amount + ' монет!', 'win');
-    document.getElementById('admin-total-users').textContent = countUsers();
 }
 
 function adminRemoveCoins() {
@@ -254,7 +265,7 @@ function spin() {
     
     const interval = setInterval(() => {
         slots.forEach(s => {
-            s.textContent = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+            s.innerHTML = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
         });
     }, 80);
     
@@ -262,12 +273,12 @@ function spin() {
         clearInterval(interval);
         slots.forEach(s => s.classList.remove('spinning'));
         
-        const result = slots.map(s => s.textContent);
+        const result = slots.map(s => s.innerHTML);
         
         if (result[0] === result[1] && result[1] === result[2]) {
             addCoins(500);
             userData.wins++;
-            showResult('slot-result', 'ДЖЕКПОТ! +500 монет!', 'win');
+            showResult('slot-result', 'ДЖЕКПОТ! +500!', 'win');
             showToast('ДЖЕКПОТ! +500!', 'win');
         } else if (result[0] === result[1] || result[1] === result[2] || result[0] === result[2]) {
             addCoins(150);
@@ -291,11 +302,10 @@ function betDice(choice) {
     
     userData.gamesPlayed++;
     const dice = document.getElementById('dice-result');
-    
     dice.classList.add('rolling');
     
     const interval = setInterval(() => {
-        dice.textContent = diceFaces[Math.floor(Math.random() * 6)];
+        dice.innerHTML = diceFaces[Math.floor(Math.random() * 6)];
     }, 100);
     
     setTimeout(() => {
@@ -303,7 +313,7 @@ function betDice(choice) {
         dice.classList.remove('rolling');
         
         const result = Math.floor(Math.random() * 6);
-        dice.textContent = diceFaces[result];
+        dice.innerHTML = diceFaces[result];
         
         const isLow = result <= 2;
         if ((choice === 'low' && isLow) || (choice === 'high' && !isLow)) {
@@ -318,7 +328,7 @@ function betDice(choice) {
     }, 1500);
 }
 
-// ============ РЕЗУЛЬТАТЫ ============
+// ============ РЕЗУЛЬТАТ ============
 function showResult(elementId, message, type) {
     const el = document.getElementById(elementId);
     el.textContent = message;
