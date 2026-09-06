@@ -1,4 +1,4 @@
-// ============ ДАННЫЕ ПОЛЬЗОВАТЕЛЯ ============
+// ============ ДАННЫЕ ============
 let userData = {
     userId: null,
     username: 'Гость',
@@ -11,6 +11,32 @@ let userData = {
     firstVisit: null,
     lastVisit: null
 };
+
+// ============ СИМВОЛЫ СЛОТОВ (SVG) ============
+const slotSymbols = [
+    // Бриллиант
+    '<svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M12 21L8 9l4-6 4 6z"/></svg>',
+    // Корона
+    '<svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35"><path d="M3 7l4 5 5-6 5 6 4-5-2 12H5z"/></svg>',
+    // Звезда
+    '<svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35"><path d="M12 2L15 9H22L16 14L19 21L12 16L5 21L8 14L2 9H9L12 2Z"/></svg>',
+    // Семёрка
+    '<svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35"><text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-size="22" font-weight="900" fill="currentColor" font-family="Arial">7</text></svg>',
+    // Колокольчик
+    '<svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35"><path d="M12 2a6 6 0 0 0-6 6v3a6 6 0 0 1-1 3.5L4 17h16l-1-2.5a6 6 0 0 1-1-3.5V8a6 6 0 0 0-6-6z"/><circle cx="12" cy="20" r="2"/></svg>',
+    // Сердце
+    '<svg viewBox="0 0 24 24" fill="currentColor" width="35" height="35"><path d="M12 21s-8-5.5-8-11a4 4 0 0 1 8-2.5A4 4 0 0 1 20 10c0 5.5-8 11-8 11z"/></svg>'
+];
+
+// ============ КУБИК (SVG) ============
+const diceFaces = [
+    '<svg viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="8" r="1.5" fill="currentColor"/><circle cx="8" cy="16" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="8" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="8" cy="16" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>',
+    '<svg viewBox="0 0 24 24" width="80" height="80" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/><circle cx="16" cy="8" r="1.5" fill="currentColor"/><circle cx="8" cy="12" r="1.5" fill="currentColor"/><circle cx="16" cy="12" r="1.5" fill="currentColor"/><circle cx="8" cy="16" r="1.5" fill="currentColor"/><circle cx="16" cy="16" r="1.5" fill="currentColor"/></svg>'
+];
 
 // ============ ИНИЦИАЛИЗАЦИЯ ============
 function init() {
@@ -76,7 +102,7 @@ function updateUI() {
     const name = document.getElementById('profile-name');
     
     if (userData.firstName) {
-        avatar.textContent = userData.firstName[0].toUpperCase();
+        avatar.innerHTML = userData.firstName[0].toUpperCase();
         name.textContent = userData.firstName;
     }
     
@@ -103,56 +129,39 @@ function spendCoins(amount) {
     return false;
 }
 
-// ============ ТОСТ УВЕДОМЛЕНИЯ ============
+// ============ ТОСТ ============
 function showToast(message, type = 'info') {
     const toast = document.getElementById('toast');
     toast.textContent = message;
     toast.className = 'toast ' + type;
     
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 10);
-    
-    setTimeout(() => {
-        toast.classList.remove('show');
-    }, 2000);
+    setTimeout(() => toast.classList.add('show'), 10);
+    setTimeout(() => toast.classList.remove('show'), 2000);
 }
 
 // ============ НАВИГАЦИЯ ============
 function showGames() {
     const screens = ['games-screen', 'profile-screen', 'slots-screen', 'roulette-screen', 'dice-screen'];
-    
-    screens.forEach(s => {
-        document.getElementById(s).classList.add('hidden');
-    });
+    screens.forEach(s => document.getElementById(s).classList.add('hidden'));
     
     document.getElementById('games-screen').classList.remove('hidden');
-    
     document.getElementById('nav-games').classList.add('active');
     document.getElementById('nav-profile').classList.remove('active');
 }
 
 function showProfile() {
     const screens = ['games-screen', 'profile-screen', 'slots-screen', 'roulette-screen', 'dice-screen'];
-    
-    screens.forEach(s => {
-        document.getElementById(s).classList.add('hidden');
-    });
+    screens.forEach(s => document.getElementById(s).classList.add('hidden'));
     
     document.getElementById('profile-screen').classList.remove('hidden');
-    
     document.getElementById('nav-games').classList.remove('active');
     document.getElementById('nav-profile').classList.add('active');
-    
     updateUI();
 }
 
 function showGame(game) {
     const screens = ['games-screen', 'profile-screen', 'slots-screen', 'roulette-screen', 'dice-screen'];
-    
-    screens.forEach(s => {
-        document.getElementById(s).classList.add('hidden');
-    });
+    screens.forEach(s => document.getElementById(s).classList.add('hidden'));
     
     if (game === 'menu') {
         document.getElementById('games-screen').classList.remove('hidden');
@@ -165,13 +174,12 @@ function showGame(game) {
 }
 
 // ============ СЛОТЫ ============
-const slotEmojis = ['🍒', '🍋', '💎', '7️⃣', '⭐', '🔔'];
 let isSpinning = false;
 
 function spin() {
     if (isSpinning) return;
     if (!spendCoins(100)) {
-        showToast('Недостаточно фишек!', 'lose');
+        showToast('Недостаточно монет!', 'lose');
         return;
     }
 
@@ -188,7 +196,8 @@ function spin() {
     
     let spinInterval = setInterval(() => {
         slots.forEach(slot => {
-            slot.textContent = slotEmojis[Math.floor(Math.random() * slotEmojis.length)];
+            const randomSymbol = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+            slot.innerHTML = randomSymbol;
         });
     }, 80);
 
@@ -196,9 +205,9 @@ function spin() {
         clearInterval(spinInterval);
         
         const result = slots.map(slot => {
-            const emoji = slotEmojis[Math.floor(Math.random() * slotEmojis.length)];
-            slot.textContent = emoji;
-            return emoji;
+            const symbol = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+            slot.innerHTML = symbol;
+            return symbol;
         });
         
         slots.forEach(slot => slot.classList.remove('spinning'));
@@ -207,16 +216,16 @@ function spin() {
             addCoins(500);
             userData.wins++;
             slots.forEach(slot => slot.classList.add('winner'));
-            showResult('slot-result', '🎉 ДЖЕКПОТ! +500 фишек!', 'win');
-            showToast('🎉 ДЖЕКПОТ! +500 💰', 'win');
+            showResult('slot-result', 'ДЖЕКПОТ! +500 монет!', 'win');
+            showToast('ДЖЕКПОТ! +500 монет!', 'win');
         } else if (result[0] === result[1] || result[1] === result[2] || result[0] === result[2]) {
             addCoins(150);
             userData.wins++;
-            showResult('slot-result', '✨ Две одинаковые! +150 фишек', 'win');
-            showToast('✨ +150 💰', 'win');
+            showResult('slot-result', 'Две одинаковые! +150 монет', 'win');
+            showToast('+150 монет', 'win');
         } else {
             userData.losses++;
-            showResult('slot-result', '😢 Попробуй ещё раз', 'lose');
+            showResult('slot-result', 'Попробуй ещё раз', 'lose');
         }
 
         setTimeout(() => {
@@ -226,14 +235,14 @@ function spin() {
         saveUserData();
         isSpinning = false;
         spinBtn.disabled = false;
-        spinBtn.innerHTML = '<span>Крутить</span><span class="btn-cost">100 💰</span>';
+        spinBtn.innerHTML = '<span>Крутить</span><span class="btn-cost">100 монет</span>';
     }, 2000);
 }
 
 // ============ РУЛЕТКА ============
 function betRoulette(color) {
     if (!spendCoins(100)) {
-        showToast('Недостаточно фишек!', 'lose');
+        showToast('Недостаточно монет!', 'lose');
         return;
     }
 
@@ -251,11 +260,11 @@ function betRoulette(color) {
             const winAmount = color === 'green' ? 1400 : 200;
             addCoins(winAmount);
             userData.wins++;
-            showResult('roulette-result', '🎉 Выпало ' + result + '! +' + winAmount + ' фишек!', 'win');
-            showToast('🎉 +' + winAmount + ' 💰', 'win');
+            showResult('roulette-result', 'Выпало ' + result + '! +' + winAmount + ' монет!', 'win');
+            showToast('+' + winAmount + ' монет', 'win');
         } else {
             userData.losses++;
-            showResult('roulette-result', '😢 Выпало ' + result + '. Повезёт в другой раз!', 'lose');
+            showResult('roulette-result', 'Выпало ' + result + '. Повезёт в другой раз!', 'lose');
         }
         
         saveUserData();
@@ -273,18 +282,18 @@ function betRoulette(color) {
 // ============ КОСТИ ============
 function betDice(choice) {
     if (!spendCoins(100)) {
-        showToast('Недостаточно фишек!', 'lose');
+        showToast('Недостаточно монет!', 'lose');
         return;
     }
 
     userData.gamesPlayed++;
     const dice = document.getElementById('dice-result');
-    const diceEmojis = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
     
     dice.classList.add('rolling');
     
     let rollInterval = setInterval(() => {
-        dice.textContent = diceEmojis[Math.floor(Math.random() * 6)];
+        const randomFace = diceFaces[Math.floor(Math.random() * 6)];
+        dice.innerHTML = randomFace;
     }, 100);
 
     setTimeout(() => {
@@ -292,19 +301,19 @@ function betDice(choice) {
         dice.classList.remove('rolling');
         dice.classList.add('result');
         
-        const result = Math.floor(Math.random() * 6) + 1;
-        dice.textContent = diceEmojis[result - 1];
+        const result = Math.floor(Math.random() * 6);
+        dice.innerHTML = diceFaces[result];
         
-        const isLow = result <= 3;
+        const isLow = result <= 2;
         
         if ((choice === 'low' && isLow) || (choice === 'high' && !isLow)) {
             addCoins(200);
             userData.wins++;
-            showResult('dice-message', '🎉 Выпало ' + result + '! +200 фишек!', 'win');
-            showToast('🎉 +200 💰', 'win');
+            showResult('dice-message', 'Выпало ' + (result + 1) + '! +200 монет!', 'win');
+            showToast('+200 монет', 'win');
         } else {
             userData.losses++;
-            showResult('dice-message', '😢 Выпало ' + result + '. Не угадал!', 'lose');
+            showResult('dice-message', 'Выпало ' + (result + 1) + '. Не угадал!', 'lose');
         }
         
         setTimeout(() => {
