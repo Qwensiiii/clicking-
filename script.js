@@ -1,327 +1,305 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
+// ============ ДАННЫЕ ПОЛЬЗОВАТЕЛЯ ============
+let userData = {
+    userId: null,
+    username: 'Гость',
+    firstName: '',
+    balance: 1000,
+    gamesPlayed: 0,
+    wins: 0,
+    losses: 0,
+    daysPlayed: 1,
+    firstVisit: null,
+    lastVisit: null
+};
+
+// ============ ИНИЦИАЛИЗАЦИЯ ============
+function init() {
+    if (window.Telegram?.WebApp) {
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        
+        const user = tg.initDataUnsafe?.user;
+        if (user) {
+            userData.userId = user.id;
+            userData.username = user.username || 'Гость';
+            userData.firstName = user.first_name || '';
+        }
+    }
+    
+    loadUserData();
+    updateUI();
+    showGames();
 }
 
-body {
-    background: #0f0f1a;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    font-family: -apple-system, sans-serif;
-    color: white;
-    overflow: hidden;
-    touch-action: manipulation;
+// ============ СОХРАНЕНИЕ ============
+function getStorageKey() {
+    return 'casino_data_' + (userData.userId || 'guest');
 }
 
-/* Шапка */
-.header {
-    background: #1a1a2e;
-    padding: 15px 20px;
-    text-align: center;
-    border-bottom: 2px solid #ffd700;
+function saveUserData() {
+    userData.lastVisit = new Date().toISOString();
+    localStorage.setItem(getStorageKey(), JSON.stringify(userData));
 }
 
-.balance {
-    font-size: 28px;
-    font-weight: bold;
-    color: #ffd700;
+function loadUserData() {
+    const localData = localStorage.getItem(getStorageKey());
+    
+    if (localData) {
+        try {
+            const parsed = JSON.parse(localData);
+            userData = { ...userData, ...parsed };
+            checkDays();
+        } catch (e) {
+            console.error('Ошибка загрузки', e);
+        }
+    } else {
+        userData.firstVisit = new Date().toISOString();
+        saveUserData();
+    }
 }
 
-.balance-label {
-    font-size: 12px;
-    color: #a8a8b3;
+function checkDays() {
+    if (userData.firstVisit) {
+        const first = new Date(userData.firstVisit);
+        const now = new Date();
+        const diffDays = Math.floor((now - first) / (1000 * 60 * 60 * 24)) + 1;
+        userData.daysPlayed = diffDays;
+    }
 }
 
-/* Экраны */
-.screen {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    overflow-y: auto;
+// ============ UI ============
+function updateUI() {
+    document.getElementById('balance').textContent = userData.balance;
+    
+    const avatar = document.getElementById('profile-avatar');
+    const name = document.getElementById('profile-name');
+    
+    if (userData.firstName) {
+        avatar.textContent = userData.firstName[0].toUpperCase();
+        name.textContent = userData.firstName;
+    }
+    
+    document.getElementById('stat-balance').textContent = userData.balance;
+    document.getElementById('stat-games').textContent = userData.gamesPlayed;
+    document.getElementById('stat-wins').textContent = userData.wins;
+    document.getElementById('stat-losses').textContent = userData.losses;
+    document.getElementById('stat-days').textContent = userData.daysPlayed;
 }
 
-.hidden {
-    display: none !important;
+function addCoins(amount) {
+    userData.balance += amount;
+    saveUserData();
+    updateUI();
 }
 
-/* Меню игр */
-.menu-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 15px;
-    width: 100%;
-    max-width: 350px;
+function spendCoins(amount) {
+    if (userData.balance >= amount) {
+        userData.balance -= amount;
+        saveUserData();
+        updateUI();
+        return true;
+    }
+    return false;
 }
 
-.menu-item {
-    background: #2a2a4a;
-    border-radius: 20px;
-    padding: 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: transform 0.1s, background 0.2s;
-    border: 2px solid transparent;
-    display: flex;
-    align-items: center;
-    gap: 20px;
+// ============ НАВИГАЦИЯ ============
+function showGames() {
+    const screens = ['games-screen', 'profile-screen', 'slots-screen', 'roulette-screen', 'dice-screen'];
+    
+    screens.forEach(s => {
+        document.getElementById(s).classList.add('hidden');
+    });
+    
+    document.getElementById('games-screen').classList.remove('hidden');
+    
+    document.getElementById('nav-games').classList.add('active');
+    document.getElementById('nav-profile').classList.remove('active');
 }
 
-.menu-item:active {
-    transform: scale(0.95);
-    background: #3a3a5a;
+function showProfile() {
+    const screens = ['games-screen', 'profile-screen', 'slots-screen', 'roulette-screen', 'dice-screen'];
+    
+    screens.forEach(s => {
+        document.getElementById(s).classList.add('hidden');
+    });
+    
+    document.getElementById('profile-screen').classList.remove('hidden');
+    
+    document.getElementById('nav-games').classList.remove('active');
+    document.getElementById('nav-profile').classList.add('active');
+    
+    updateUI();
 }
 
-.menu-icon {
-    font-size: 40px;
-    width: 60px;
+function showGame(game) {
+    const screens = ['games-screen', 'profile-screen', 'slots-screen', 'roulette-screen', 'dice-screen'];
+    
+    screens.forEach(s => {
+        document.getElementById(s).classList.add('hidden');
+    });
+    
+    if (game === 'menu') {
+        document.getElementById('games-screen').classList.remove('hidden');
+    } else {
+        document.getElementById(game + '-screen').classList.remove('hidden');
+    }
+    
+    document.getElementById('nav-games').classList.add('active');
+    document.getElementById('nav-profile').classList.remove('active');
 }
 
-.menu-text {
-    text-align: left;
+// ============ СЛОТЫ ============
+const slotEmojis = ['🍒', '🍋', '💎', '7️⃣', '⭐', '🔔'];
+let isSpinning = false;
+
+function spin() {
+    if (isSpinning) return;
+    if (!spendCoins(100)) {
+        showResult('slot-result', 'Недостаточно фишек!', 'lose');
+        return;
+    }
+
+    isSpinning = true;
+    userData.gamesPlayed++;
+    
+    const spinBtn = document.getElementById('spin-btn');
+    spinBtn.disabled = true;
+    spinBtn.textContent = 'Крутим...';
+
+    document.getElementById('slot-result').textContent = '';
+    document.getElementById('slot-result').className = 'result-message';
+
+    const slots = [1, 2, 3].map(i => document.getElementById('slot' + i));
+    
+    let spinInterval = setInterval(() => {
+        slots.forEach(slot => {
+            slot.textContent = slotEmojis[Math.floor(Math.random() * slotEmojis.length)];
+        });
+    }, 100);
+
+    setTimeout(() => {
+        clearInterval(spinInterval);
+
+        const result = slots.map(slot => {
+            const emoji = slotEmojis[Math.floor(Math.random() * slotEmojis.length)];
+            slot.textContent = emoji;
+            return emoji;
+        });
+
+        if (result[0] === result[1] && result[1] === result[2]) {
+            addCoins(500);
+            userData.wins++;
+            showResult('slot-result', '🎉 ДЖЕКПОТ! +500 фишек!', 'win');
+        } else if (result[0] === result[1] || result[1] === result[2] || result[0] === result[2]) {
+            addCoins(150);
+            userData.wins++;
+            showResult('slot-result', '✨ Две одинаковые! +150 фишек', 'win');
+        } else {
+            userData.losses++;
+            showResult('slot-result', '😢 Попробуй ещё раз', 'lose');
+        }
+
+        saveUserData();
+        isSpinning = false;
+        spinBtn.disabled = false;
+        spinBtn.textContent = 'Крутить (100)';
+    }, 2000);
 }
 
-.menu-title {
-    font-size: 18px;
-    font-weight: bold;
+// ============ РУЛЕТКА ============
+function betRoulette(color) {
+    if (!spendCoins(100)) {
+        showResult('roulette-result', 'Недостаточно фишек!', 'lose');
+        return;
+    }
+
+    userData.gamesPlayed++;
+    const wheel = document.getElementById('wheel');
+    const numbers = ['green', 'red', 'black', 'red', 'black', 'red', 'black', 'red', 'black'];
+    const result = numbers[Math.floor(Math.random() * numbers.length)];
+    const rotation = 720 + Math.floor(Math.random() * 360);
+    wheel.style.transform = 'rotate(' + rotation + 'deg)';
+
+    setTimeout(() => {
+        if (result === color) {
+            const winAmount = color === 'green' ? 1400 : 200;
+            addCoins(winAmount);
+            userData.wins++;
+            showResult('roulette-result', '🎉 Выпало ' + result + '! +' + winAmount + ' фишек!', 'win');
+        } else {
+            userData.losses++;
+            showResult('roulette-result', '😢 Выпало ' + result + '. Повезёт в другой раз!', 'lose');
+        }
+        
+        saveUserData();
+        
+        setTimeout(() => {
+            wheel.style.transform = 'rotate(0deg)';
+        }, 1000);
+    }, 3000);
 }
 
-.menu-desc {
-    font-size: 12px;
-    color: #a8a8b3;
-    margin-top: 5px;
+// ============ КОСТИ ============
+function betDice(choice) {
+    if (!spendCoins(100)) {
+        showResult('dice-message', 'Недостаточно фишек!', 'lose');
+        return;
+    }
+
+    userData.gamesPlayed++;
+    const dice = document.getElementById('dice-result');
+    const diceEmojis = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+    
+    let rollInterval = setInterval(() => {
+        dice.textContent = diceEmojis[Math.floor(Math.random() * 6)];
+    }, 100);
+
+    setTimeout(() => {
+        clearInterval(rollInterval);
+        
+        const result = Math.floor(Math.random() * 6) + 1;
+        dice.textContent = diceEmojis[result - 1];
+        
+        const isLow = result <= 3;
+        
+        if ((choice === 'low' && isLow) || (choice === 'high' && !isLow)) {
+            addCoins(200);
+            userData.wins++;
+            showResult('dice-message', '🎉 Выпало ' + result + '! +200 фишек!', 'win');
+        } else {
+            userData.losses++;
+            showResult('dice-message', '😢 Выпало ' + result + '. Не угадал!', 'lose');
+        }
+        
+        saveUserData();
+    }, 1500);
 }
 
-/* Кнопки */
-.back-btn {
-    background: none;
-    border: 2px solid #444;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-bottom: 15px;
-    font-size: 14px;
-    align-self: flex-start;
+// ============ РЕЗУЛЬТАТЫ ============
+function showResult(elementId, message, type) {
+    const el = document.getElementById(elementId);
+    el.textContent = message;
+    el.className = 'result-message ' + type;
 }
 
-.btn {
-    background: #ffd700;
-    color: #1a1a2e;
-    border: none;
-    padding: 15px 30px;
-    border-radius: 12px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    width: 100%;
-    max-width: 300px;
-    transition: transform 0.1s;
+// ============ СБРОС ============
+function resetProfile() {
+    if (confirm('Точно сбросить весь прогресс?')) {
+        localStorage.removeItem(getStorageKey());
+        
+        userData.balance = 1000;
+        userData.gamesPlayed = 0;
+        userData.wins = 0;
+        userData.losses = 0;
+        userData.firstVisit = new Date().toISOString();
+        userData.daysPlayed = 1;
+        
+        saveUserData();
+        updateUI();
+        showGames();
+    }
 }
 
-.btn:active {
-    transform: scale(0.95);
-}
-
-.btn:disabled {
-    background: #666;
-    color: #999;
-}
-
-.reset-btn {
-    margin-top: 20px;
-    background: #ff4444;
-    color: white;
-}
-
-/* Слоты */
-.slot-machine {
-    background: #2a2a4a;
-    border-radius: 20px;
-    padding: 20px;
-    width: 100%;
-    max-width: 350px;
-    text-align: center;
-}
-
-.slots-row {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin: 20px 0;
-}
-
-.slot {
-    width: 70px;
-    height: 70px;
-    background: #1a1a2e;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 35px;
-    border: 3px solid #444;
-}
-
-/* Рулетка */
-.roulette-wheel {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: conic-gradient(
-        red 0deg 45deg,
-        black 45deg 90deg,
-        red 90deg 135deg,
-        black 135deg 180deg,
-        red 180deg 225deg,
-        black 225deg 270deg,
-        red 270deg 315deg,
-        black 315deg 360deg
-    );
-    margin: 20px auto;
-    position: relative;
-    border: 5px solid #ffd700;
-    transition: transform 3s ease-out;
-}
-
-.roulette-ball {
-    position: absolute;
-    top: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 15px;
-    height: 15px;
-    background: white;
-    border-radius: 50%;
-    border: 2px solid #333;
-}
-
-/* Кости */
-.dice {
-    font-size: 80px;
-    margin: 20px;
-}
-
-/* Ставки */
-.bet-buttons {
-    display: flex;
-    gap: 10px;
-    margin: 15px 0;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.bet-btn {
-    padding: 12px 20px;
-    border-radius: 10px;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.bet-red { background: #ff4444; color: white; }
-.bet-black { background: #333; color: white; }
-.bet-green { background: #00aa00; color: white; }
-.bet-low { background: #333; color: white; }
-.bet-high { background: #ffd700; color: #333; }
-
-.bet-info {
-    font-size: 14px;
-    color: #a8a8b3;
-    margin-top: 5px;
-}
-
-/* Результаты */
-.result-message {
-    font-size: 20px;
-    margin: 15px;
-    min-height: 30px;
-    text-align: center;
-}
-
-.win { color: #00ff00; }
-.lose { color: #ff4444; }
-
-/* Профиль */
-.profile-avatar {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: #2a2a4a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 50px;
-    margin: 20px auto;
-    border: 3px solid #ffd700;
-}
-
-.profile-name {
-    font-size: 24px;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.profile-stats {
-    width: 100%;
-    max-width: 350px;
-}
-
-.stat-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px;
-    background: #2a2a4a;
-    border-radius: 12px;
-    margin-bottom: 10px;
-}
-
-.stat-label {
-    color: #a8a8b3;
-}
-
-.stat-value {
-    font-weight: bold;
-    color: #ffd700;
-}
-
-/* Нижняя навигация */
-.bottom-nav {
-    display: flex;
-    background: #1a1a2e;
-    border-top: 2px solid #333;
-}
-
-.bottom-nav button {
-    flex: 1;
-    background: none;
-    border: none;
-    color: white;
-    padding: 12px 5px;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.bottom-nav button.active {
-    background: #2a2a4a;
-    border-top: 2px solid #ffd700;
-}
-
-.nav-icon {
-    font-size: 24px;
-    display: block;
-}
-
-.nav-text {
-    font-size: 12px;
-    display: block;
-    margin-top: 3px;
-}
+// ============ ЗАПУСК ============
+init();
