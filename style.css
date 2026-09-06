@@ -19,8 +19,6 @@ body {
 
 .header {
     background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     padding: 15px 20px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -36,18 +34,10 @@ body {
 .logo {
     font-size: 18px;
     font-weight: 900;
-    background: linear-gradient(135deg, #ffd700, #ff8c00);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #ffd700;
     display: flex;
     align-items: center;
     gap: 7px;
-}
-
-.logo svg {
-    color: #ffd700;
-    -webkit-text-fill-color: initial;
 }
 
 .balance-box {
@@ -82,8 +72,8 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .hidden {
@@ -168,9 +158,6 @@ body {
     margin-bottom: 15px;
     font-size: 13px;
     align-self: flex-start;
-    display: flex;
-    align-items: center;
-    gap: 4px;
 }
 
 .btn {
@@ -240,60 +227,20 @@ body {
     100% { transform: translateY(-3px); }
 }
 
-/* РУЛЕТКА — ОПТИМИЗИРОВАННАЯ */
+/* РУЛЕТКА */
 .roulette-container {
     margin: 15px auto;
 }
 
-.roulette-wheel {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    background: conic-gradient(
-        #cc0000 0deg 45deg,
-        #1a1a1a 45deg 90deg,
-        #cc0000 90deg 135deg,
-        #1a1a1a 135deg 180deg,
-        #cc0000 180deg 225deg,
-        #1a1a1a 225deg 270deg,
-        #cc0000 270deg 315deg,
-        #1a1a1a 315deg 360deg
-    );
-    position: relative;
-    border: 5px solid #ffd700;
-    transition: transform 2s cubic-bezier(0.2, 0.8, 0.2, 1);
+.roulette-svg {
+    width: 220px;
+    height: 220px;
+}
+
+#roulette-rotor {
+    transition: transform 3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transform-origin: 120px 120px;
     will-change: transform;
-}
-
-.roulette-ball {
-    position: absolute;
-    top: -11px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 16px;
-    height: 16px;
-    background: white;
-    border-radius: 50%;
-    border: 3px solid #ffd700;
-    z-index: 10;
-}
-
-.roulette-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-weight: 900;
-    font-size: 11px;
-    color: #ffd700;
-    background: #1a1a2e;
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid #ffd700;
 }
 
 .dice-container {
