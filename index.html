@@ -9,9 +9,12 @@
 <body>
     <div class="header">
         <div class="header-top">
-            <span class="logo">⭐ ClickApp</span>
+            <span class="logo">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15 9H22L16 14L19 21L12 16L5 21L8 14L2 9H9L12 2Z"/></svg>
+                ClickApp
+            </span>
             <div class="balance-box">
-                <span>💰</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
                 <span class="balance" id="balance">1000</span>
             </div>
         </div>
@@ -21,28 +24,36 @@
         <h1 class="screen-title">Выбери игру</h1>
         <div class="menu-grid">
             <div class="menu-item" onclick="showGame('slots')">
-                <div class="menu-icon-box">🎰</div>
+                <div class="menu-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5" width="28" height="28"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="2.5" fill="#ffd700"/><circle cx="16" cy="8" r="2.5" fill="#ffd700"/><circle cx="8" cy="16" r="2.5" fill="#ffd700"/><circle cx="16" cy="16" r="2.5" fill="#ffd700"/></svg>
+                </div>
                 <div class="menu-text">
                     <div class="menu-title">Слоты</div>
                     <div class="menu-desc">Три одинаковых — джекпот!</div>
                 </div>
-                <span class="arrow">›</span>
+                <svg class="arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
             </div>
+            
             <div class="menu-item" onclick="showGame('roulette')">
-                <div class="menu-icon-box">🎡</div>
+                <div class="menu-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5" width="28" height="28"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/></svg>
+                </div>
                 <div class="menu-text">
                     <div class="menu-title">Рулетка</div>
                     <div class="menu-desc">Ставь на цвет — выигрывай!</div>
                 </div>
-                <span class="arrow">›</span>
+                <svg class="arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
             </div>
+            
             <div class="menu-item" onclick="showGame('dice')">
-                <div class="menu-icon-box">🎲</div>
+                <div class="menu-icon-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5" width="28" height="28"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5" fill="#ffd700"/><circle cx="16" cy="8" r="1.5" fill="#ffd700"/><circle cx="12" cy="12" r="1.5" fill="#ffd700"/><circle cx="8" cy="16" r="1.5" fill="#ffd700"/><circle cx="16" cy="16" r="1.5" fill="#ffd700"/></svg>
+                </div>
                 <div class="menu-text">
                     <div class="menu-title">Кости</div>
                     <div class="menu-desc">Больше или меньше?</div>
                 </div>
-                <span class="arrow">›</span>
+                <svg class="arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
             </div>
         </div>
     </div>
@@ -58,18 +69,24 @@
                 <div class="stat-row"><span class="stat-label">Выигрышей</span><span class="stat-value stat-win" id="stat-wins">0</span></div>
                 <div class="stat-row"><span class="stat-label">Проигрышей</span><span class="stat-value stat-lose" id="stat-losses">0</span></div>
             </div>
-            <button class="admin-btn hidden" id="admin-btn" onclick="showAdmin()">🔑 Админ панель</button>
+            <button class="admin-btn hidden" id="admin-btn" onclick="showAdmin()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Админ панель
+            </button>
         </div>
     </div>
 
     <div class="screen hidden" id="slots-screen">
-        <button class="back-btn" onclick="showGame('menu')">← Назад</button>
+        <button class="back-btn" onclick="showGame('menu')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Назад
+        </button>
         <div class="game-box">
             <h2 class="game-title">Слоты</h2>
             <div class="slots-row">
-                <div class="slot" id="slot1">🎰</div>
-                <div class="slot" id="slot2">🎰</div>
-                <div class="slot" id="slot3">🎰</div>
+                <div class="slot" id="slot1"></div>
+                <div class="slot" id="slot2"></div>
+                <div class="slot" id="slot3"></div>
             </div>
             <div class="result-message" id="slot-result"></div>
             <button class="btn" id="spin-btn" onclick="spin()">Крутить<span class="btn-cost">100 монет</span></button>
@@ -77,10 +94,13 @@
     </div>
 
     <div class="screen hidden" id="roulette-screen">
-        <button class="back-btn" onclick="showGame('menu')">← Назад</button>
+        <button class="back-btn" onclick="showGame('menu')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Назад
+        </button>
         <div class="game-box">
             <h2 class="game-title">Рулетка</h2>
-            <div class="roulette-icon">🎡</div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#ffd700" stroke-width="1.5" width="80" height="80" style="margin:15px auto;display:block;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/></svg>
             <div class="result-message" id="roulette-result"></div>
             <div class="bet-buttons">
                 <button class="bet-btn bet-red" onclick="betRoulette('red')">Красное</button>
@@ -92,10 +112,13 @@
     </div>
 
     <div class="screen hidden" id="dice-screen">
-        <button class="back-btn" onclick="showGame('menu')">← Назад</button>
+        <button class="back-btn" onclick="showGame('menu')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+            Назад
+        </button>
         <div class="game-box">
             <h2 class="game-title">Кости</h2>
-            <div class="dice-box" id="dice-result">🎲</div>
+            <div class="dice-box" id="dice-result"></div>
             <div class="result-message" id="dice-message">Угадай 1-3 или 4-6</div>
             <div class="bet-buttons">
                 <button class="bet-btn bet-low" onclick="betDice('low')">1 — 3</button>
@@ -107,7 +130,7 @@
 
     <div class="modal-overlay hidden" id="admin-modal">
         <div class="modal">
-            <h3 class="modal-title">🔑 Админ панель</h3>
+            <h3 class="modal-title">Админ панель</h3>
             <input class="text-input" id="admin-user-id" placeholder="ID игрока (например: 2)">
             <input class="text-input" id="admin-amount" placeholder="Сумма монет" type="number">
             <button class="admin-give-btn" onclick="adminGive()">+ Выдать монеты</button>
@@ -119,8 +142,14 @@
     <div class="toast" id="toast"></div>
 
     <div class="bottom-nav">
-        <button class="active" id="nav-games" onclick="showGames()"><span class="nav-icon">🎮</span>Игры</button>
-        <button id="nav-profile" onclick="showProfile()"><span class="nav-icon">👤</span>Профиль</button>
+        <button class="active" id="nav-games" onclick="showGames()">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="4"/><circle cx="8" cy="10" r="1" fill="currentColor"/><circle cx="16" cy="10" r="1" fill="currentColor"/></svg>
+            <span>Игры</span>
+        </button>
+        <button id="nav-profile" onclick="showProfile()">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+            <span>Профиль</span>
+        </button>
     </div>
 
     <script src="script.js"></script>
